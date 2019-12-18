@@ -2,6 +2,8 @@
 # devtools::install_github("BioinformaticsFMRP/TCGAbiolinks")
 library(TCGAbiolinks)
 TCGAbiolinks:::getGDCprojects()$project_id
+
+# These datasets were downloaded on March 25th, 2019
 query1=GDCquery(project="TCGA-BRCA",
                 data.category = "Gene expression",
                 data.type = "Gene expression quantification",
