@@ -5,22 +5,16 @@ R code to replicate the results from the FSCseq paper
 
 ## Simulations
 
-### Simulating Data
-
-### Creating R Scripts and Submitting Batch Jobs via Slurm
-
-### Collecting Results
-
-### Replicating Tables and Figures
+Procedure for simulating data can be followed
+[here](https://github.com/limddavid/FSCseqPaper/tree/master/SimulateData).
+Then, all simulation analyses done in the FSCseq paper can be replicated
+by following the steps
+[here](https://github.com/limddavid/FSCseqPaper/tree/master/Simulations).
+All analyses were run as batch jobs in slurm.
 
 ## TCGA Breast Cancer (BRCA) Dataset
 
-### Acquiring Data
-
-### Pre-processing Data
-
-### Creating R Scripts and Submitting Batch Jobs via Slurm
-
-### Collecting Results
-
-### Replicating Tables and Figures
+Acquisition and analyses of the TCGA BRCA dataset can be replicated by
+following the steps
+[here](https://github.com/limddavid/FSCseqPaper/tree/master/RealData).
+All analyses were run as batch jobs in slurm.
