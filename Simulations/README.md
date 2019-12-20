@@ -4,7 +4,7 @@
 ## Simulating Data
 
 See
-[`SimulateRNASeqData`](https://github.com/limddavid/FSCseqPaper/tree/master/SimulateData).
+[`SimulateRNASeqData`](https://github.com/DavidKLim/FSCseqPaper/tree/master/SimulateData).
 Simulated datasets will be saved in a subdirectories of “./Simulations”
 
 ## Creating R Scripts and Submitting Batch Jobs via Slurm
@@ -30,4 +30,4 @@ in the text.
 After all results are finished and saved, run `SummarizeResults.R` to
 replicate tables and figures from simulations in the FSCseq paper. Ouput
 is directed to the `/Results`
-[subdirectory](https://github.com/limddavid/FSCseqPaper/tree/master/Simulations/Results)
+[subdirectory](https://github.com/DavidKLim/FSCseqPaper/tree/master/Simulations/Results)
