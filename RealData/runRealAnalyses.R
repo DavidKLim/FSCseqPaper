@@ -33,7 +33,7 @@ runRealAnalyses_FSC_tune = function(ncores=1,dataset=c("BRCA_full","BRCA_pure"),
         # for new alpha (first value of lambda)
         res = FSCseq::FSCseq(ncores=ncores,X=X, y=cts[idx,], k=K, lambda=lambda_search[l], alpha=alpha_search[a],
                              size_factors=SF, norm_y=norm_y[idx,],true_clusters=as.numeric(as.factor(cls)), true_disc=NULL,
-                             init_parms=T, init_cls=res_K$clusters, init_coefs=res_K$coefs, init_phi=res_K$phi,trace=T,
+                             init_parms=T, init_cls=res_K$clusters, init_wts=res_K$wts, init_coefs=res_K$coefs, init_phi=res_K$phi,trace=T,
                              trace.file=sprintf("%s/Diagnostics/%d_%f_%f_covars%s.txt",
                                                 trace.folder,K,lambda_search[l],alpha_search[a],substr(as.character(covariates),1,1)),
                              mb_size=floor(sum(idx)/nMB))
@@ -43,7 +43,7 @@ runRealAnalyses_FSC_tune = function(ncores=1,dataset=c("BRCA_full","BRCA_pure"),
         load(prev_res.file)
         res = FSCseq::FSCseq(ncores=ncores,X=X, y=cts[idx,], k=K, lambda=lambda_search[l], alpha=alpha_search[a],
                              size_factors=SF, norm_y=norm_y[idx,],true_clusters=as.numeric(as.factor(cls)), true_disc=NULL,
-                             init_parms=T, init_cls=res$clusters, init_coefs=res$coefs, init_phi=res$phi,trace=T,
+                             init_parms=T, init_cls=res$clusters, init_wts=res$wts, init_coefs=res$coefs, init_phi=res$phi,trace=T,
                              trace.file=sprintf("%s/Diagnostics/%d_%f_%f_covars%s.txt",
                                                 trace.folder,K,lambda_search[l],alpha_search[a],substr(as.character(covariates),1,1)),
                              mb_size=floor(sum(idx)/nMB))
@@ -99,7 +99,7 @@ runRealAnalyses_FSC_init = function(ncores=1,dataset=c("BRCA_full","BRCA_pure"),
   res = FSCseq::FSCseq(ncores=ncores, X=X, y=cts[idx,], k=K, lambda=lambda, alpha=alpha,
                        size_factors=SF, norm_y=norm_y[idx,],
                        true_clusters=as.numeric(as.factor(cls)), true_disc=NULL,
-                       init_parms=F, init_cls=NULL, init_coefs=NULL, init_phi=NULL,
+                       init_parms=F, init_cls=NULL, init_wts=NULL, init_coefs=NULL, init_phi=NULL,
                        n_rinits=1,method="CEM",trace=T,trace.file=sprintf("%s/Diagnostics/%d_%f_%f_covars%s.txt",
                                                                           trace.folder,K,lambda,alpha,substr(as.character(covariates),1,1)),
                        mb_size=floor(sum(idx)/nMB))

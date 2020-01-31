@@ -40,30 +40,42 @@ all_sims_df4$beta=as.factor(all_sims_df4$beta)
 all_sims_df4$phi=as.factor(all_sims_df4$phi)
 
 
-all_sims_df4$OA_FSC = as.factor(all_sims_df4$OA_FSC==1)
-all_sims_df2$OA_FSC = as.factor(all_sims_df2$OA_FSC==1)
+all_sims_df4$OA_FSC = factor(all_sims_df4$OA_FSC==1,levels=c(TRUE,FALSE))
+all_sims_df2$OA_FSC = factor(all_sims_df2$OA_FSC==1,levels=c(TRUE,FALSE))
 
+size=1.5
 
-p_K4_n100_LFC1 = ggplot(all_sims_df4[all_sims_df4$LFCg==1 & all_sims_df4$n==100,],aes(x=FPR_FSC,y=TPR_FSC,color=pDEg,shape=phi))+geom_point(aes(size=OA_FSC))+
+p_K4_n100_LFC1 = ggplot(all_sims_df4[all_sims_df4$LFCg==1 & all_sims_df4$n==100,],aes(x=FPR_FSC,y=TPR_FSC,color=OA_FSC,shape=phi),size=size)+geom_point()+
+  # geom_point(aes(alpha=OA_FSC),size=size)+
   ggtitle("n=100, Low LFC") + xlab("FPR") + ylab("TPR") +
-  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) +
-  scale_color_discrete(name = expression(p[DE]), labels = c("0.025", "0.05")) + ylim(c(0,1))+
-  scale_size_discrete(name="Correct Order")
-p_K4_n100_LFC2 = ggplot(all_sims_df4[all_sims_df4$LFCg==2 & all_sims_df4$n==100,],aes(x=FPR_FSC,y=TPR_FSC,color=pDEg,shape=phi))+geom_point(aes(size=OA_FSC))+
+  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+ xlim(c(0,0.015))+
+  # scale_color_discrete(name = expression(p[DE]), labels = c("0.025", "0.05")) +
+  # scale_alpha_discrete(name="Correct Order",range=c(0.3,0.8))
+  scale_color_discrete(name="Correct Order")
+
+p_K4_n100_LFC2 = ggplot(all_sims_df4[all_sims_df4$LFCg==2 & all_sims_df4$n==100,],aes(x=FPR_FSC,y=TPR_FSC,color=OA_FSC,shape=phi),size=size)+geom_point()+
+  # geom_point(aes(alpha=OA_FSC),size=size)+
   ggtitle("n=100, Moderate LFC") + xlab("FPR") + ylab("TPR") +
-  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) +
-  scale_color_discrete(name = expression(p[DE]), labels = c("0.025", "0.05")) + ylim(c(0,1))+
-  scale_size_discrete(name="Correct Order")
-p_K4_n200_LFC1 = ggplot(all_sims_df4[all_sims_df4$LFCg==1 & all_sims_df4$n==200,],aes(x=FPR_FSC,y=TPR_FSC,color=pDEg,shape=phi))+geom_point(aes(size=OA_FSC))+
+  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+xlim(c(0,0.015))+
+  # scale_color_discrete(name = expression(p[DE]), labels = c("0.025", "0.05")) +
+  # scale_alpha_discrete(name="Correct Order",range=c(0.3,0.8))
+  scale_color_discrete(name="Correct Order")
+
+p_K4_n200_LFC1 = ggplot(all_sims_df4[all_sims_df4$LFCg==1 & all_sims_df4$n==200,],aes(x=FPR_FSC,y=TPR_FSC,color=OA_FSC,shape=phi),size=size)+geom_point()+
+  # geom_point(aes(alpha=OA_FSC),size=size)+
   ggtitle("n=200, Low LFC") + xlab("FPR") + ylab("TPR") +
-  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) +
-  scale_color_discrete(name = expression(p[DE]), labels = c("0.025", "0.05")) + ylim(c(0,1))+
-  scale_size_discrete(name="Correct Order")
-p_K4_n200_LFC2 = ggplot(all_sims_df4[all_sims_df4$LFCg==2 & all_sims_df4$n==200,],aes(x=FPR_FSC,y=TPR_FSC,color=pDEg,shape=phi))+geom_point(aes(size=OA_FSC))+
+  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+xlim(c(0,0.015))+
+  # scale_color_discrete(name = expression(p[DE]), labels = c("0.025", "0.05")) +
+  # scale_alpha_discrete(name="Correct Order",range=c(0.3,0.8))
+  scale_color_discrete(name="Correct Order")
+
+p_K4_n200_LFC2 = ggplot(all_sims_df4[all_sims_df4$LFCg==2 & all_sims_df4$n==200,],aes(x=FPR_FSC,y=TPR_FSC,color=OA_FSC,shape=phi),size=size)+geom_point()+
+  # geom_point(aes(alpha=OA_FSC),size=size)+
   ggtitle("n=200, Moderate LFC") + xlab("FPR") + ylab("TPR") +
-  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) +
-  scale_color_discrete(name = expression(p[DE]), labels = c("0.025", "0.05")) + ylim(c(0,1))+
-  scale_size_discrete(name="Correct Order")
+  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+xlim(c(0,0.015))+
+  # scale_color_discrete(name = expression(p[DE]), labels = c("0.025", "0.05")) +
+  # scale_alpha_discrete(name="Correct Order",range=c(0.3,0.8))
+  scale_color_discrete(name="Correct Order")
 
 mylegend1<-g_legend(p_K4_n100_LFC1)
 p1 = arrangeGrob(p_K4_n100_LFC1 + theme(legend.position="none"),
@@ -80,8 +92,8 @@ dev.off()
 ####################################################################################################################
 
 # Figure 2: ARI, OA barplots stratified K=2/K=4. all methods
-df2_subs = df2[df2$n %in% c(50) & df2$LFCg %in% c(1) & df2$pDEg==0.05,]
-df4_subs = df4[df4$n %in% c(100) & df4$LFCg %in% c(1) & df4$pDEg==0.05,]
+df2_subs = df2[df2$beta==12 & df2$n %in% c(50) & df2$LFCg %in% c(1) & df2$pDEg==0.05,]
+df4_subs = df4[df2$beta==12 & df4$n %in% c(100) & df4$LFCg %in% c(1) & df4$pDEg==0.05,]
 
 library(reshape2)
 # violin plots (Fig3 revised)
@@ -112,9 +124,9 @@ df_violin2$method = factor(df_violin2$method,levels=c("FSC","iCl","HC","KM","NBM
 df_violin4$method = factor(df_violin4$method,levels=c("FSC","iCl","HC","KM","NBMB","lMC","vMC","rMC"))
 
 p1=ggplot(df_violin2,aes(x=method,y=value,fill=metric,color=metric)) + ylab("")+
-  geom_violin() + ggtitle(expression(K[true] ~ '=2')) + geom_point(pch = 21, position = position_jitterdodge(jitter.width=0.25,jitter.height=0.001))
+  geom_violin(scale="width",width=0.7,alpha=0.5,adjust=0.6,position=position_dodge(width=0.8)) + ggtitle(expression(K[true] ~ '=2')) #+ geom_point(pch = 21, position = position_jitterdodge(jitter.width=0.25,jitter.height=0.001))
 p2=ggplot(df_violin4,aes(x=method,y=value,fill=metric,color=metric)) + ylab("")+
-  geom_violin() + ggtitle(expression(K[true] ~ '=4')) + geom_point(pch = 21, position = position_jitterdodge(jitter.width=0.25,jitter.height=0.001))
+  geom_violin(scale="width",width=0.7,alpha=0.5,adjust=0.6,position=position_dodge(width=0.8)) + ggtitle(expression(K[true] ~ '=4')) #+ geom_point(pch = 21, position = position_jitterdodge(jitter.width=0.25,jitter.height=0.001))
 
 mylegend<-g_legend(p1)
 # png(sprintf("%s/Fig3_K2_LFC12_K4_LFC23.png",dir_name))
