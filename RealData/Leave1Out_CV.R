@@ -26,7 +26,7 @@ runCV=function(dataset,med_filt,MAD_filt,covariates="F"){
                                      size_factors=SF[-i],
                                      norm_y=norm_y[ids_disc,-i],
                                      true_clusters=res$clusters[-i],
-                                     init_cls=res$clusters[-i], n_rinits=0, maxit_inits=1,
+                                     init_cls=res$clusters[-i], init_wts=res$wts[,-i], n_rinits=0, maxit_inits=1,
                                      maxit_EM=1,method="EM",mb_size=sum(ids_disc))           # just M step, and then output
 
     test_SF = SF[i]
