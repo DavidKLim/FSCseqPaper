@@ -37,19 +37,23 @@ files, which sources functions from `runRealAnalyses_runScripts.R`. For
 computational efficiency, the FSCseq workflow was broken down into two
 sequential parts: 1. `*FSCinit.R` submits jobs for the initialization
 searches with small penalty, and 2. `*FSCtune.R` searches across values
-of tuning parameters \(\{K,\lambda,\alpha\}\). The `*others.R` submits
-jobs for competing methods.
+of tuning parameters ![K](https://latex.codecogs.com/png.latex?K "K"),
+![\\lambda](https://latex.codecogs.com/png.latex?%5Clambda "\\lambda"),
+and ![\\alpha](https://latex.codecogs.com/png.latex?%5Calpha "\\alpha").
+The `*others.R` submits jobs for competing methods.
 
 ## Collecting Results
 
 Results are saved in subdirectories corresponding to the dataset name,
 and gene pre-filtering thresholds for median count and MAD quantile,
-which are fixed in FSCseq for all real data analyses at \(500\) and
-\(50\), respectively. Run `collectFSCResults.R` to compare the BICs from
-all FSCseq tuning results, and select the optimal values for tuning
-parameters. For easy access in summary of results, copy the
-corresponding result into a new file `FSC_covars[*]_summary.out`, with
-`[*]` denoting whether the plate effect was adjusted.
+which are fixed in FSCseq for all real data analyses at
+![500](https://latex.codecogs.com/png.latex?500 "500") and
+![50](https://latex.codecogs.com/png.latex?50 "50"), respectively. Run
+`collectFSCResults.R` to compare the BICs from all FSCseq tuning
+results, and select the optimal values for tuning parameters. For easy
+access in summary of results, copy the corresponding result into a new
+file `FSC_covars[*]_summary.out`, with `[*]` denoting whether the plate
+effect was adjusted.
 
 ## Leave-one-out Cross Validation
 
