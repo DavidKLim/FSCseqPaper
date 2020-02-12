@@ -5,14 +5,17 @@ FSCseq analysis was performed on the TCGA Breast Cancer dataset
 
 ## Acquiring Data
 
-Run `DataAcquisition.R` to acquire the dataset and annotations.
+Run `./TCGA_BRCA/DataAcquisition.R` to acquire the dataset and
+annotations. The dataset used in our analyses was downloaded on March
+25th, 2019.
 
 ## Pre-processing Data
 
-Cluster labels `SigI` and `SigU` that were compared in the FSCseq paper
-were extracted from annotations from the TCGA BRCA
-[paper](https://doi.org/10.1038/nature11412). Batch and plate
-information was downloaded manually from
+Run `./TCGA_BRCA/DataPreProcessing.R` to pre-process the data in the
+same way as in the manuscript. Cluster labels `SigI` and `SigU` that
+were compared in the FSCseq paper were extracted from annotations from
+the TCGA BRCA [paper](https://doi.org/10.1038/nature11412). Batch and
+plate information was downloaded manually from
 [here](https://bioinformatics.mdanderson.org/BatchEffectsViewer/), with
 Index File `GDC 2019-07-30-1200 (current)`, and Workflow
 `RNAseq-counts`. This information was saved to
@@ -21,7 +24,10 @@ extracted from this [paper](https://doi.org/10.1038/ncomms9971) by Aran
 et al (2014). In FSCseq, we analyze `BRCA_full` and `BRCA_pure`, and
 necessary objects after pre-filtering, including normalized counts, are
 saved in `BRCA_full_env.RData` and `BRCA_pure_env.RData`, respectively,
-for ease of use in submitting slurm batch jobs.
+for ease of use in submitting slurm batch jobs. Data without applying
+pre-filtering steps is also saved in
+`./RealData/TCGA_BRCA/BRCA_raw_normalizations.RData` for use in creating
+some post-analysis figures.
 
 ## Creating R Scripts and Submitting Batch Jobs via Slurm
 

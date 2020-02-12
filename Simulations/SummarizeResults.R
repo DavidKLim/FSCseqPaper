@@ -56,7 +56,7 @@ p_K4_n100_LFC1 = ggplot(all_sims_df4[all_sims_df4$LFCg==1 & all_sims_df4$n==100,
 p_K4_n100_LFC2 = ggplot(all_sims_df4[all_sims_df4$LFCg==2 & all_sims_df4$n==100,],aes(x=FPR_FSC,y=TPR_FSC,color=OA_FSC,shape=phi),size=size)+geom_point()+
   # geom_point(aes(alpha=OA_FSC),size=size)+
   ggtitle("n=100, Moderate LFC") + xlab("FPR") + ylab("TPR") +
-  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+xlim(c(0,0.015))+
+  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+ xlim(c(0,0.015))+
   # scale_color_discrete(name = expression(p[DE]), labels = c("0.025", "0.05")) +
   # scale_alpha_discrete(name="Correct Order",range=c(0.3,0.8))
   scale_color_discrete(name="Correct Order")
@@ -64,7 +64,7 @@ p_K4_n100_LFC2 = ggplot(all_sims_df4[all_sims_df4$LFCg==2 & all_sims_df4$n==100,
 p_K4_n200_LFC1 = ggplot(all_sims_df4[all_sims_df4$LFCg==1 & all_sims_df4$n==200,],aes(x=FPR_FSC,y=TPR_FSC,color=OA_FSC,shape=phi),size=size)+geom_point()+
   # geom_point(aes(alpha=OA_FSC),size=size)+
   ggtitle("n=200, Low LFC") + xlab("FPR") + ylab("TPR") +
-  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+xlim(c(0,0.015))+
+  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+ xlim(c(0,0.015))+
   # scale_color_discrete(name = expression(p[DE]), labels = c("0.025", "0.05")) +
   # scale_alpha_discrete(name="Correct Order",range=c(0.3,0.8))
   scale_color_discrete(name="Correct Order")
@@ -72,7 +72,7 @@ p_K4_n200_LFC1 = ggplot(all_sims_df4[all_sims_df4$LFCg==1 & all_sims_df4$n==200,
 p_K4_n200_LFC2 = ggplot(all_sims_df4[all_sims_df4$LFCg==2 & all_sims_df4$n==200,],aes(x=FPR_FSC,y=TPR_FSC,color=OA_FSC,shape=phi),size=size)+geom_point()+
   # geom_point(aes(alpha=OA_FSC),size=size)+
   ggtitle("n=200, Moderate LFC") + xlab("FPR") + ylab("TPR") +
-  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+xlim(c(0,0.015))+
+  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+ xlim(c(0,0.015))+
   # scale_color_discrete(name = expression(p[DE]), labels = c("0.025", "0.05")) +
   # scale_alpha_discrete(name="Correct Order",range=c(0.3,0.8))
   scale_color_discrete(name="Correct Order")
@@ -88,12 +88,38 @@ png(sprintf("%s/Fig1.png",dir_name),width=800,height=800)
 grid.arrange(p1,right=mylegend1,ncol=1,heights=c(10, 1),top=main)
 dev.off()
 
+# ### for oral prelim presentation
+# text_size=22
+# point_size=3
+# p_K4_n100_LFC1 = ggplot(all_sims_df4[all_sims_df4$LFCg==1 & all_sims_df4$n==100,],aes(x=FPR_FSC,y=TPR_FSC,color=pDEg,shape=phi),size=size)+geom_point(size=point_size)+
+#   ggtitle("LFC = 1") + xlab("FPR") + ylab("TPR") +
+#   scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+ xlim(c(0,0.025))+
+#   scale_color_discrete(name=expression(p[DE]))+theme(text=element_text(size=text_size))
+#
+# p_K4_n100_LFC2 = ggplot(all_sims_df4[all_sims_df4$LFCg==2 & all_sims_df4$n==100,],aes(x=FPR_FSC,y=TPR_FSC,color=pDEg,shape=phi),size=size)+geom_point(size=point_size)+
+#   # geom_point(aes(alpha=OA_FSC),size=size)+
+#   ggtitle("LFC = 2") + xlab("FPR") + ylab("TPR") +
+#   scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+ xlim(c(0,0.025))+
+#   scale_color_discrete(name=expression(p[DE]))+theme(text=element_text(size=text_size))
+# mylegend1<-g_legend(p_K4_n100_LFC1)
+# p1 = arrangeGrob(p_K4_n100_LFC1 + theme(legend.position="none"),
+#                  p_K4_n100_LFC2 + theme(legend.position="none"),
+#                  nrow=1)
+# png("C:/Users/limdd/Documents/Research/Dissertation/Presentation/P1_FS.png",width=900,height=500)
+# grid.arrange(p1,right=mylegend1,ncol=1,heights=c(10, 1))
+# dev.off()
+
 
 ####################################################################################################################
 
 # Figure 2: ARI, OA barplots stratified K=2/K=4. all methods
+## n/K = 25
 df2_subs = df2[df2$beta==12 & df2$n %in% c(50) & df2$LFCg %in% c(1) & df2$pDEg==0.05,]
 df4_subs = df4[df2$beta==12 & df4$n %in% c(100) & df4$LFCg %in% c(1) & df4$pDEg==0.05,]
+
+## n/K = 50
+#df2_subs = df2[df2$beta==12 & df2$n %in% c(100) & df2$LFCg %in% c(1) & df2$pDEg==0.05,]
+#df4_subs = df4[df2$beta==12 & df4$n %in% c(200) & df4$LFCg %in% c(1) & df4$pDEg==0.05,]
 
 library(reshape2)
 # violin plots (Fig3 revised)

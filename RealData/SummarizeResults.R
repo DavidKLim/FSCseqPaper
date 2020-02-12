@@ -166,6 +166,13 @@ pheatmap(log(raw_norm_y[genelist_all %in% pam50,order(cls,resT$clusters,resF$clu
          breaks=myBreaks,main="TCGA BRCA High Purity Samples, PAM50 Genes with Annotated Exclusions from Pre-filtering and Analyses")
 dev.off()
 
+# # for prelim presentation
+# png("C:/Users/limdd/Documents/Research/Dissertation/Presentation/P1_PAM50.png",height=700,width=900)
+# pheatmap(t(log(raw_norm_y[genelist_all %in% pam50,order(cls,resT$clusters,resF$clusters,lMC_summary$cls)]+0.1)),scale="column",cluster_rows=F,
+#          annotation_row=annotation_col,annotation_col=annotation_row,annotation_colors=c(mycolors2,mycolors1), color=my_cols,show_rownames=F,
+#          breaks=myBreaks,main="TCGA BRCA High Purity Samples, PAM50 Genes with Annotated Exclusions from Pre-filtering and Analyses",)
+# dev.off()
+
 ####################################################################################################################
 
 # Supp Figure 1: BRCA_pure all cluster-disc genes heatmap
