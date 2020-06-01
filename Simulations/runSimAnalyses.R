@@ -1,5 +1,5 @@
 # source functions that perform each comparative method
-source("./Simulations/runSimAnalyses_functions.R")
+source("runSimAnalyses_functions.R")
 
 ## Wrapper functions for each comparative method ##
 
@@ -267,5 +267,58 @@ runSimAnalyses_others=function(K=2,n=100,LFCg=1,pDEg=0.05,beta=8,phi=0.15,
     save(HC_summary,file=res3)
   } else{
     cat("\nHC analysis already run...\n")
+  }
+}
+
+runSimAnalyses_NMF=function(K=2,n=100,LFCg=1,pDEg=0.05,beta=8,phi=0.15,
+                            sigma_g=0.1,sigma_b=0,B=1,LFCb=0,K_search=c(2:6),sim_index=1){
+  library(fpc)
+  library(mclust)
+  library(cluster)
+  library(NbClust)
+  library(FSCseq)
+  library(NB.MClust)
+  library(pryr)
+  library(NMF)
+  nmf.options(shared.memory=F)
+  nmf.options(pbackend="seq")
+
+  # use file.name to specify data.file to load, and trace.folder to create to store diagnostics
+  file.name = sprintf("./Simulations/%f_%f/B%d_LFCb%d/%d_%d_%f_%f_%f_%f_sim%d",sigma_g,sigma_b,B,LFCb,K,n,LFCg,pDEg,beta,phi,sim_index)
+  data.file = sprintf("%s_data.RData",file.name)
+
+  load(data.file)
+  # Input simulated data
+  cts = sim.dat$cts
+  cls = sim.dat$cls
+  batch = sim.dat$batch
+  B=sim.dat$sim_params$B
+  g=sim.dat$sim_params$g
+  DEg_ID = sim.dat$DEg_ID
+
+  # Process simulated data
+  processed.dat = processData(y=cts,geoMeans=NULL,med_filt=TRUE,MAD_filt=TRUE,med_thresh=100,MAD_quant_thresh=50)
+  SF = processed.dat$size_factors
+  norm_y = processed.dat$norm_y
+  idx = processed.dat$idx       # length g, TRUE/FALSE
+
+  rm("sim.dat")
+  rm("processed.dat")
+
+  # mem_used() # 643 MB
+
+  if(K_search[1]==1){
+    K_search2=K_search[-1]      # for methods that can't search K=1 (iCl, KM, NBMB), omit
+  }else{K_search2=K_search}
+
+  res=sprintf("%s_NMF.out",file.name)
+  if(!file.exists(res)){
+    cat("\nRunning NMF analysis...\n")
+    NMF_summary = run_NMF(cts=norm_y[idx,],true_cls=cls,K_search=K_search2)
+    cat("\nSaving results...\n")
+    print(res)
+    save(NMF_summary,file=res)
+  } else{
+    cat("\nNMF analysis already run...\n")
   }
 }

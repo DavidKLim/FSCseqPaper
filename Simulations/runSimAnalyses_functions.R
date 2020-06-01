@@ -251,3 +251,50 @@ run_FSCseq_predict=function(sim.dat,FSC_summary){
               pARI=pARI,
               cls_metrics=cls_metrics))
 }
+
+run_NMF=function(cts,true_cls,K_search){
+  library(NMF)
+  library(fpc)
+  nmf.options(shared.memory=F)
+  nmf.options(pbackend="seq")
+
+  start_NMF=Sys.time()
+  if(K_search[1]==1){K_search=K_search[-1]}  # iCl can't compare K=1 --> remove this
+  #cts=round(cts,0)
+  #fit=NB.MClust(Count=t(cts),K=K_search)
+
+  ########## INTNMF #############
+  #library(IntNMF)
+  #cat("\nFinding optimal K...\n")
+  #opt_ks = IntNMF::nmf.opt.k(dat=t(cts), k.range=K_search, make.plot=F)
+  #opt_k = K_search[which.max(rowMeans(opt_ks))[1]]
+  #cat("\nFitting model with optimal K...\n")
+  #fit = IntNMF::nmf.mnnals(dat=t(cts), k=opt_k)  # this package function errors out b/c of a bug in package:
+                                              # fixed manually by commenting out line "dimnames(consensus)..." line in source code
+                                              # then used devtools::install_local("IntNMF.zip") on edited package
+
+  cat("\nFitting default NMF model...\n")
+  all_fit = NMF::nmf(x=cts,rank=K_search)
+  #all_fit1 = NMF::nmf(x=log(cts+0.1),rank=K_search)   # ??
+  opt_k_index = which.max(all_fit$measures$silhouette.consensus)[1]
+  opt_k = all_fit$measures$rank[opt_k_index]  # Highest average silhouette width, if >1 highest, lowest index selected.
+
+  fit = all_fit$fit[[opt_k_index]]
+  fit$clusters <- apply(coef(fit), 2, function(x)which.max(x)[1])
+
+  cat("\nFit complete.\n")
+  ## use NMF base package (IntNMF sources it)
+  #fit = NMF::nmf(x=t(cts),rank=opt_k)
+  #fit$clusters=apply(fit@fit@W, 1, function(x){which.max(x)[1]})  # manually set clusters (if more than 1 have same W value (unlikely) set as lower value)
+
+  end_NMF=Sys.time()
+
+  cls_metrics = cluster.stats(d=NULL,fit$clusters,true_cls,compareonly=T)
+  #cat(cls_metrics)
+
+  return(list(fit=fit,
+              K=opt_k,
+              cls=fit$clusters,
+              cls_metrics=cls_metrics,
+              time_elap=(end_NMF-start_NMF)))
+}

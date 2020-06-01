@@ -1,7 +1,7 @@
 
 collectSims=function(sigma_g=0.1,sigma_b=0,B=1,LFCb=0,
                      K=c(2,4), n=c(100,200), LFCg=c(1,2), pDEg=c(0.025,0.05), beta=c(8,12), phi=c(0.15,0.35,0.5),
-                     compared_methods=c("FSC","iCl","HC","KM","NBMB","lMC","vMC","rMC","pFSC"),
+                     compared_methods=c("FSC","iCl","HC","KM","NBMB","NMF","lMC","vMC","rMC","pFSC"),
                      sim_index=c(1:25)){
 
   dir_name=sprintf("./Simulations/%f_%f/B%d_LFCb%d",sigma_g,sigma_b,B,LFCb)
@@ -107,9 +107,9 @@ collectSims=function(sigma_g=0.1,sigma_b=0,B=1,LFCb=0,
                       sim_index[g])
       res.file=sprintf("%s/%d_%d_%f_%f_%f_%f_sim%d",
                        dir_name,K[a],n[b],LFCg[c],pDEg[d],beta[e],phi[f],sim_index[g])
-      res1=sprintf("%s_res_FSC.out",res.file)
+      res1=sprintf("%s_gene_CEM_jointTRUE_res_FSC.out",res.file)
       if(file.exists(res1) & ("FSC" %in% compared_methods)){load(res1)}else if(!file.exists(res1) & ("FSC" %in% compared_methods)){next}
-      res7=sprintf("%s_res_FSCpred.out",res.file)
+      res7=sprintf("%s_gene_CEM_jointTRUE_res_FSCpred.out",res.file)
       if(file.exists(res7) & ("pFSC" %in% compared_methods)){
         load(res7)
         pFSC_summary=FSC_predict_summary
@@ -127,6 +127,10 @@ collectSims=function(sigma_g=0.1,sigma_b=0,B=1,LFCb=0,
         load(res6)
         lMC_summary=MC_summary$lMC; vMC_summary=MC_summary$vMC; rMC_summary=MC_summary$rMC
       }else if(!file.exists(res6) & (all(c("lMC","vMC","rMC") %in% compared_methods))){next}
+
+      res8=sprintf("%s_NMF.out",res.file)
+      if(file.exists(res8) & ("NMF" %in% compared_methods)){load(res8)}else if(!file.exists(res8) & ("NMF" %in% compared_methods)){next}
+
       print(res.file)
 
       load(sprintf("%s/%d_%d_%f_%f_%f_%f_sim%d_data.RData",
@@ -237,13 +241,13 @@ ifelse(!dir.exists(res.dir),dir.create(res.dir),FALSE)
 # collect main results
 df2=collectSims(sigma_g=0.1,sigma_b=0,B=1,LFCb=0,
                 K=c(2), n=c(50,100), LFCg=c(1,2), pDEg=c(0.025,0.05), beta=c(8,12), phi=c(0.15,0.35,0.5),
-                compared_methods=c("FSC","iCl","HC","KM","NBMB","lMC","vMC","rMC","pFSC"),
+                compared_methods=c("FSC","iCl","HC","KM","NBMB","NMF","lMC","vMC","rMC","pFSC"),
                 sim_index=c(1:25))
 save(df2,file=sprintf("%s/df2.out",res.dir))
 
 df4=collectSims(sigma_g=0.1,sigma_b=0,B=1,LFCb=0,
                 K=c(4), n=c(100,200), LFCg=c(1,2), pDEg=c(0.025,0.05), beta=c(8,12), phi=c(0.15,0.35,0.5),
-                compared_methods=c("FSC","iCl","HC","KM","NBMB","lMC","vMC","rMC","pFSC"),
+                compared_methods=c("FSC","iCl","HC","KM","NBMB","NMF","lMC","vMC","rMC","pFSC"),
                 sim_index=c(1:25))
 save(df4,file=sprintf("%s/df4.out",res.dir))
 
@@ -257,24 +261,24 @@ save(dfmain,file=sprintf("%s/dfmain.out",res.dir))
 # collect batch results
 df2batch2=collectSims(sigma_g=0.1,sigma_b=0,B=2,LFCb=2,
                      K=c(2), n=c(100), LFCg=c(2), pDEg=c(0.05), beta=c(12), phi=c(0.35),
-                     compared_methods=c("FSC","iCl","HC","KM","NBMB","lMC","vMC","rMC","pFSC"),
+                     compared_methods=c("FSC","iCl","HC","KM","NBMB","NMF","lMC","vMC","rMC","pFSC"),
                      sim_index=c(1:25))
 df2batch2$df$gamma=2;df2batch2$all_sims_df$gamma=2
 df4batch2=collectSims(sigma_g=0.1,sigma_b=0,B=2,LFCb=2,
                      K=c(4), n=c(200), LFCg=c(2), pDEg=c(0.05), beta=c(12), phi=c(0.35),
-                     compared_methods=c("FSC","iCl","HC","KM","NBMB","lMC","vMC","rMC","pFSC"),
+                     compared_methods=c("FSC","iCl","HC","KM","NBMB","NMF","lMC","vMC","rMC","pFSC"),
                      sim_index=c(1:25))
 df4batch2$df$gamma=2;df4batch2$all_sims_df$gamma=2
 df2batch=list(df=rbind(df2batch2$df,df2batch3$df),all_sims_df=rbind(df2batch2$all_sims_df,df2batch3$all_sims_df))
 
 df2batch3=collectSims(sigma_g=0.1,sigma_b=0,B=2,LFCb=3,
                       K=c(2), n=c(100), LFCg=c(2), pDEg=c(0.05), beta=c(12), phi=c(0.35),
-                      compared_methods=c("FSC","iCl","HC","KM","NBMB","lMC","vMC","rMC","pFSC"),
+                      compared_methods=c("FSC","iCl","HC","KM","NBMB","NMF","lMC","vMC","rMC","pFSC"),
                       sim_index=c(1:25))
 df2batch3$df$gamma=3;df2batch3$all_sims_df$gamma=3
 df4batch3=collectSims(sigma_g=0.1,sigma_b=0,B=2,LFCb=3,
                       K=c(4), n=c(200), LFCg=c(2), pDEg=c(0.05), beta=c(12), phi=c(0.35),
-                      compared_methods=c("FSC","iCl","HC","KM","NBMB","lMC","vMC","rMC","pFSC"),
+                      compared_methods=c("FSC","iCl","HC","KM","NBMB","NMF","lMC","vMC","rMC","pFSC"),
                       sim_index=c(1:25))
 df4batch3$df$gamma=3;df4batch3$all_sims_df$gamma=3
 df4batch=list(df=rbind(df4batch2$df,df4batch3$df),all_sims_df=rbind(df4batch2$all_sims_df,df4batch3$all_sims_df))

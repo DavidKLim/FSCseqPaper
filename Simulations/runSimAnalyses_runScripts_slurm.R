@@ -101,3 +101,24 @@ runOthers=function(sigma_g=0.1,sigma_b=0, B=1, LFCb=0,
     }
   }}}}}}}
 }
+runNMFs=function(sigma_g=0.1,sigma_b=0, B=1, LFCb=0,
+                 K=c(2,4), n=c(100,200), LFCg=c(1,2), pDEg=c(0.025,0.05), beta=c(8,12), phi=c(0.15,0.35,0.5),
+                 sim_index=c(1:25)){
+  if(B==1){LFCb=0}
+  dir_name1=sprintf("./Simulations/%f_%f/B%d_LFCb%d",sigma_g,sigma_b,B,LFCb)
+  dir_name2=sprintf("./Simulations/scripts/%f_%f/B%d_LFCb%d",sigma_g,sigma_b,B,LFCb)
+  for(a in 1:length(K)){for(b in 1:length(n)){for(c in 1:length(LFCg)){for(d in 1:length(pDEg)){for(e in 1:length(beta)){for(f in 1:length(phi)){for(g in 1:length(sim_index)){
+    fname = sprintf("%d_%d_%f_%f_%f_%f_sim%d",K[a],n[b],LFCg[c],pDEg[d],beta[e],phi[f],sim_index[g])
+    res.file = sprintf("%s/%s_NMF.out",dir_name1,fname)
+
+    out_script=sprintf("%s/%s_NMF",dir_name2,fname)
+    if(!file.exists(res.file)){
+      mem = 2000
+      mins = 120 + 60*as.integer(n[b]/100)    # NEED TO PROFILE FOR N=50/100/200
+      run = sprintf("sbatch -p general -N 1 -n 1 --mem=%d -t %d:00 -J %s --wrap='R CMD BATCH %s'",mem,mins,fname,out_script)
+
+      Sys.sleep(0.2)
+      system(run)
+    }
+  }}}}}}}
+}
