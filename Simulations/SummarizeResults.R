@@ -118,8 +118,8 @@ df2_subs = df2[df2$beta==12 & df2$n %in% c(50) & df2$LFCg %in% c(1) & df2$pDEg==
 df4_subs = df4[df2$beta==12 & df4$n %in% c(100) & df4$LFCg %in% c(1) & df4$pDEg==0.05,]
 
 ## n/K = 50
-#df2_subs = df2[df2$beta==12 & df2$n %in% c(100) & df2$LFCg %in% c(1) & df2$pDEg==0.05,]
-#df4_subs = df4[df2$beta==12 & df4$n %in% c(200) & df4$LFCg %in% c(1) & df4$pDEg==0.05,]
+# df2_subs = df2[df2$beta==12 & df2$n %in% c(100) & df2$LFCg %in% c(1) & df2$pDEg==0.05,]
+# df4_subs = df4[df2$beta==12 & df4$n %in% c(200) & df4$LFCg %in% c(1) & df4$pDEg==0.05,]
 
 library(reshape2)
 # violin plots (Fig3 revised)
@@ -146,6 +146,7 @@ df_violin4$metric=c(rep("OA",nrow(df_OAs4)),rep("ARI",nrow(df_ARIs4)))
 colnames(df_violin4)[1]="method";  colnames(df_violin2)[1]="method"
 df_violin2$metric=factor(df_violin2$metric,levels=c("OA","ARI"))
 df_violin4$metric=factor(df_violin4$metric,levels=c("OA","ARI"))
+#
 df_violin2$method = factor(df_violin2$method,levels=c("FSC","iCl","HC","KM","NBMB","lMC","vMC","rMC"))
 df_violin4$method = factor(df_violin4$method,levels=c("FSC","iCl","HC","KM","NBMB","lMC","vMC","rMC"))
 
@@ -161,6 +162,49 @@ grid.arrange(arrangeGrob(p1+theme(legend.position="none"),
                          p2+theme(legend.position="none"),
                          nrow=2),right=mylegend,ncol=1)
 dev.off()
+
+# ## Figure for dissertation presentation:
+# for(i in 1:length(df_violin4$method)){
+#   if(df_violin4$method[i]=="FSC"){
+#     df_violin2$method[i]="FSCseq"
+#     df_violin4$method[i]="FSCseq"
+#   }else if(df_violin4$method[i]=="iCl"){
+#     df_violin2$method[i]="iCluster+"
+#     df_violin4$method[i]="iCluster+"
+#   }else if(df_violin4$method[i]=="HC"){
+#     df_violin2$method[i]="Hierarchical"
+#     df_violin4$method[i]="Hierarchical"
+#   }else if(df_violin4$method[i]=="KM"){
+#     df_violin2$method[i]="K-Medoids"
+#     df_violin4$method[i]="K-Medoids"
+#   }else if(df_violin4$method[i]=="lMC"){
+#     df_violin2$method[i]="log-MClust"
+#     df_violin4$method[i]="log-MClust"
+#   }else if(df_violin4$method[i]=="vMC"){
+#     df_violin2$method[i]="vst-MClust"
+#     df_violin4$method[i]="vst-MClust"
+#   }else if(df_violin4$method[i]=="rMC"){
+#     df_violin2$method[i]="rlog-MClust"
+#     df_violin4$method[i]="rlog-MClust"
+#   }
+# }
+# df_violin2$method = factor(df_violin2$method,levels=c("FSCseq","iCluster+","Hierarchical","K-Medoids","NBMB","log-MClust","vst-MClust","rlog-MClust"))
+# df_violin4$method = factor(df_violin4$method,levels=c("FSCseq","iCluster+","Hierarchical","K-Medoids","NBMB","log-MClust","vst-MClust","rlog-MClust"))
+#
+# p1=ggplot(df_violin2,aes(x=method,y=value,fill=metric,color=metric)) + ylab(NULL)+
+#   geom_violin(scale="width",width=0.3,alpha=0.5,adjust=0.6,position=position_dodge(width=0.5)) +
+#   ggtitle(expression(K[true] ~ '=2'))+theme(text=element_text(size=28,face="bold"))
+# p2=ggplot(df_violin4,aes(x=method,y=value,fill=metric,color=metric)) + ylab(NULL)+
+#   geom_violin(scale="width",width=0.3,alpha=0.5,adjust=0.6,position=position_dodge(width=0.5)) +
+#   ggtitle(expression(K[true] ~ '=4'))+theme(text=element_text(size=28,face="bold"))
+#
+# mylegend<-g_legend(p1)
+# png("C:/Users/limdd/Documents/Research/Dissertation/Presentation/P1_clust.png",height=900,width=1200)
+# grid.arrange(arrangeGrob(p1+theme(legend.position="none"),
+#                          p2+theme(legend.position="none"),
+#                          nrow=2),right=mylegend,ncol=1)
+# dev.off()
+
 
 ####################################################################################################################
 
