@@ -88,7 +88,7 @@ load("BRCA_pure_env.RData"); load("./TCGA_BRCA/BRCA_raw_normalizations.RData") #
 
 #filter raw_norm_y according to same criteria
 idx=rowMeds>=500 & mads>=quantile(mads,50/100)                                 # gene pre-filtering criteria
-colnames(raw_norm_y)=BRCA_anno$barcode; rownames(raw_norm_y)=rownames(raw_cts) # make sure column/row names are set
+colnames(raw_norm_y)=raw_anno$barcode; rownames(raw_norm_y)=rownames(raw_cts) # make sure column/row names are set
 idy = colnames(raw_norm_y) %in% colnames(cts); raw_norm_y=raw_norm_y[,idy]     # match according purity filtered samples
 colnames(norm_y)=colnames(cts)
 
@@ -153,7 +153,7 @@ mycolors1 = list(lMC=mycolors_lMC,KM=mycolors_KM,FSC=mycolors_FSC,FSCadj=mycolor
 # colors/breaks #
 showpanel <- function(Colors){image(matrix(1:length(Colors), ncol=1), col=Colors, xaxt="n", yaxt="n" )}
 oldpar <- par(mfrow=c(1,1))
-my_cols<-colorRampPalette( c("green", "black", "red"), space="rgb")(100)
+my_cols<-colorRampPalette( c("yellow", "black", "cyan"), space="rgb")(100)
 myBreaks <- seq(-2, 2, length.out=101)
 dev.off()
 
@@ -406,7 +406,7 @@ mycolors1 = list(SigI=mycolors_I, SigU=mycolors_U,
 # colors/breaks #
 showpanel <- function(Colors){image(matrix(1:length(Colors), ncol=1), col=Colors, xaxt="n", yaxt="n" )}
 oldpar <- par(mfrow=c(1,1))
-my_cols<-colorRampPalette( c("green", "black", "red"), space="rgb")(100)
+my_cols<-colorRampPalette( c("yellow", "black", "cyan"), space="rgb")(100)
 myBreaks <- seq(-2, 2, length.out=101)
 dev.off()
 
