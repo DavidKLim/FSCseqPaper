@@ -48,7 +48,7 @@ size=1.5
 p_K4_n100_LFC1 = ggplot(all_sims_df4[all_sims_df4$LFCg==1 & all_sims_df4$n==100,],aes(x=FPR_FSC,y=TPR_FSC,color=OA_FSC,shape=phi),size=size)+geom_point()+
   # geom_point(aes(alpha=OA_FSC),size=size)+
   ggtitle("n=100, Low LFC") + xlab("FPR") + ylab("TPR") +
-  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+ xlim(c(0,0.015))+
+  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+# xlim(c(0,0.015))+
   # scale_color_discrete(name = expression(p[DE]), labels = c("0.025", "0.05")) +
   # scale_alpha_discrete(name="Correct Order",range=c(0.3,0.8))
   scale_color_discrete(name="Correct Order")
@@ -56,7 +56,7 @@ p_K4_n100_LFC1 = ggplot(all_sims_df4[all_sims_df4$LFCg==1 & all_sims_df4$n==100,
 p_K4_n100_LFC2 = ggplot(all_sims_df4[all_sims_df4$LFCg==2 & all_sims_df4$n==100,],aes(x=FPR_FSC,y=TPR_FSC,color=OA_FSC,shape=phi),size=size)+geom_point()+
   # geom_point(aes(alpha=OA_FSC),size=size)+
   ggtitle("n=100, Moderate LFC") + xlab("FPR") + ylab("TPR") +
-  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+ xlim(c(0,0.015))+
+  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+ #xlim(c(0,0.015))+
   # scale_color_discrete(name = expression(p[DE]), labels = c("0.025", "0.05")) +
   # scale_alpha_discrete(name="Correct Order",range=c(0.3,0.8))
   scale_color_discrete(name="Correct Order")
@@ -64,7 +64,7 @@ p_K4_n100_LFC2 = ggplot(all_sims_df4[all_sims_df4$LFCg==2 & all_sims_df4$n==100,
 p_K4_n200_LFC1 = ggplot(all_sims_df4[all_sims_df4$LFCg==1 & all_sims_df4$n==200,],aes(x=FPR_FSC,y=TPR_FSC,color=OA_FSC,shape=phi),size=size)+geom_point()+
   # geom_point(aes(alpha=OA_FSC),size=size)+
   ggtitle("n=200, Low LFC") + xlab("FPR") + ylab("TPR") +
-  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+ xlim(c(0,0.015))+
+  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+ #xlim(c(0,0.015))+
   # scale_color_discrete(name = expression(p[DE]), labels = c("0.025", "0.05")) +
   # scale_alpha_discrete(name="Correct Order",range=c(0.3,0.8))
   scale_color_discrete(name="Correct Order")
@@ -72,7 +72,7 @@ p_K4_n200_LFC1 = ggplot(all_sims_df4[all_sims_df4$LFCg==1 & all_sims_df4$n==200,
 p_K4_n200_LFC2 = ggplot(all_sims_df4[all_sims_df4$LFCg==2 & all_sims_df4$n==200,],aes(x=FPR_FSC,y=TPR_FSC,color=OA_FSC,shape=phi),size=size)+geom_point()+
   # geom_point(aes(alpha=OA_FSC),size=size)+
   ggtitle("n=200, Moderate LFC") + xlab("FPR") + ylab("TPR") +
-  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+ xlim(c(0,0.015))+
+  scale_shape_manual(name=expression(phi[0]),values=c(0,2,4)) + ylim(c(0,1))+ #xlim(c(0,0.015))+
   # scale_color_discrete(name = expression(p[DE]), labels = c("0.025", "0.05")) +
   # scale_alpha_discrete(name="Correct Order",range=c(0.3,0.8))
   scale_color_discrete(name="Correct Order")
@@ -83,8 +83,8 @@ p1 = arrangeGrob(p_K4_n100_LFC1 + theme(legend.position="none"),
                  p_K4_n200_LFC1 + theme(legend.position="none"),
                  p_K4_n200_LFC2 + theme(legend.position="none"),
                  nrow=2)
-main=textGrob("TPR vs. FPR in Discovery of Cluster-discriminatory Genes",gp=gpar(fontsize=20,font=1))
-png(sprintf("%s/Fig1.png",dir_name),width=800,height=800)
+main=textGrob("TPR vs. FPR in Discovery of Cluster-discriminatory Genes",gp=gpar(fontsize=14,fontface="bold"))
+png(sprintf("%s/Fig1_uncropped.png",dir_name),width=800,height=800,res=120)    # Fig1: remove "xlim" commented out '#'
 grid.arrange(p1,right=mylegend1,ncol=1,heights=c(10, 1),top=main)
 dev.off()
 
@@ -157,7 +157,7 @@ p2=ggplot(df_violin4,aes(x=method,y=value,fill=metric,color=metric)) + ylab("")+
 
 mylegend<-g_legend(p1)
 # png(sprintf("%s/Fig3_K2_LFC12_K4_LFC23.png",dir_name))
-png(sprintf("%s/Fig2.png",dir_name),width=600,height=600)
+png(sprintf("%s/Fig2.png",dir_name),width=600,height=600,res=120)
 grid.arrange(arrangeGrob(p1+theme(legend.position="none"),
                          p2+theme(legend.position="none"),
                          nrow=2),right=mylegend,ncol=1)
