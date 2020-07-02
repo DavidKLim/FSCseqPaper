@@ -7,7 +7,7 @@ run_FSCseq=function(sim.dat,batch,K_search,
 
   cts=sim.dat$cts; cls=sim.dat$cls; DEg_ID=sim.dat$DEg_ID
   library(FSCseq)
-  start_FSC = as.numeric(Sys.time())
+  start_FSC = Sys.time()
   n_rinits=1; method="CEM"
   FSCseq_results = FSCseq::FSCseq_workflow(cts=cts,ncores=ncores,batch=batch,true_cls=cls,true_disc=DEg_ID,
                                            method="CEM",n_rinits=1,med_filt=100,MAD_filt=50,
@@ -29,14 +29,14 @@ run_FSCseq=function(sim.dat,batch,K_search,
   norm_y=FSCseq_results$processed.dat$norm_y; idx=FSCseq_results$processed.dat$idx
 
   max_lambda=fit$lambda; max_alpha=fit$alpha
-  end_FSC = as.numeric(Sys.time())
+  end_FSC = Sys.time()
 
-  cat(paste("Final fit complete. Total time elapsed: ",end_FSC-start_FSC,"s.\n",sep=""))
+  cat(paste("Final fit complete. Total time elapsed: ",as.numeric(end_FSC-start_FSC,units="secs"),"s.\n",sep=""))
 
   # Calculate sensitivity (TPR) and false positive rate (FPR)
   FSC_discriminatory=fit$discriminatory
-  TPR = sum(DEg_ID & FSC_discriminatory)/sum(DEg_ID)     # true disc found to truly be disc
-  FPR = sum(!DEg_ID & FSC_discriminatory)/sum(!DEg_ID)   # not disc found falsely to be disc
+  TPR = sum(DEg_ID[idx] & FSC_discriminatory)/sum(DEg_ID[idx])     # true disc found to truly be disc
+  FPR = sum(!DEg_ID[idx] & FSC_discriminatory)/sum(!DEg_ID[idx])   # not disc found falsely to be disc
 
   # Calculate cls metrics
   cls_metrics = cluster.stats(d=NULL,fit$clusters,cls,compareonly=T)
@@ -46,14 +46,14 @@ run_FSCseq=function(sim.dat,batch,K_search,
               max_lambda=max_lambda,max_alpha=max_alpha,
               cls=fit$clusters,
               cls_metrics=cls_metrics,
-              time_elap=(end_FSC-start_FSC),
+              time_elap=as.numeric(end_FSC-start_FSC,units="secs"),
               TPR=TPR,FPR=FPR,
               norm_y=norm_y,idx=idx))
 }
 run_iCl=function(cts,true_cls,K_search,
                  ncores,n.lambda,DEg_ID){
 
-  start_iCl = as.numeric(Sys.time())
+  start_iCl = Sys.time()
   if(K_search[1]==1){K_search=K_search[-1]}  # iCl can't compare K=1 --> remove this
 
   iCl_K_search = K_search-1      # iCl_K = K - 1 --> K = iCl_K + 1
@@ -94,23 +94,25 @@ run_iCl=function(cts,true_cls,K_search,
   cat(paste("Optimal K:",max_k,"+1\n"))
 
   fit <- iClusterPlus(dt1=t(cts),type="poisson",lambda=max_lambda,K=max_k,maxiter=10)
-  end_iCl = as.numeric(Sys.time())
+  end_iCl = Sys.time()
 
-  cat(paste("Final fit complete. Total time elapsed: ",end_iCl-start_iCl,"s.\n",sep=""))
+  cat(paste("Final fit complete. Total time elapsed: ",as.numeric(end_iCl-start_iCl,units="secs"),"s.\n",sep=""))
 
-  cls_metrics = cluster.stats(d=NULL,fit$clusters,true_cls)
-
+  print(fit$clusters); print(true_cls)
+  cls_metrics = cluster.stats(d=NULL,fit$clusters,true_cls,compareonly=T)
+  print("cls_metrics done")
   #cat(cls_metrics)
 
   iCl_disc = if(is.matrix(fit$beta[[1]])){rowSums(fit$beta[[1]]==0)}else{fit$beta[[1]]==0}
   TPR = sum(iCl_disc & DEg_ID)/sum(DEg_ID)
   FPR = sum(iCl_disc & !DEg_ID)/sum(!DEg_ID)
 
+  print("Finished run_iCl")
   return(list(fit=fit,
               K=max_k+1,
               cls=fit$clusters,
               cls_metrics=cls_metrics,
-              time_elap=(end_iCl-start_iCl),TPR=TPR,FPR=FPR))
+              time_elap=as.numeric(end_iCl-start_iCl,units="secs"),TPR=TPR,FPR=FPR))
 }
 run_HC=function(cts,idx,true_cls,K_search){
   library(FSCseq)
@@ -138,7 +140,7 @@ run_HC=function(cts,idx,true_cls,K_search){
               K=K,
               cls=cls,
               cls_metrics=cls_metrics,
-              time_elap=(end_HC-start_HC)))
+              time_elap=as.numeric(end_HC-start_HC,units="secs")))
 }
 run_KM=function(cts,true_cls,K_search){
   start_KM = Sys.time()
@@ -163,7 +165,7 @@ run_KM=function(cts,true_cls,K_search){
               K=K,
               cls=cls,
               cls_metrics=cls_metrics,
-              time_elap=(end_KM-start_KM)))
+              time_elap=as.numeric(end_KM-start_KM,units="secs")))
 }
 run_NBMB=function(cts,true_cls,K_search){
   start_NBMB=Sys.time()
@@ -179,7 +181,7 @@ run_NBMB=function(cts,true_cls,K_search){
               K=fit$K,
               cls=fit$cluster,
               cls_metrics=cls_metrics,
-              time_elap=(end_NBMB-start_NBMB)))
+              time_elap=as.numeric(end_NBMB-start_NBMB,units="secs")))
 }
 run_MCs=function(cts,idx,true_cls,K_search,dds){
   # output lMC, vMC, and rMC
@@ -194,7 +196,7 @@ run_MCs=function(cts,idx,true_cls,K_search,dds){
   lMC=list(K=fit$G,
            cls=fit$classification,
            cls_metrics=cls_metrics,
-           time_elap=(end_lMC-start_lMC))
+           time_elap=as.numeric(end_lMC-start_lMC,units="secs"))
   rm("fit")
 
   start_vMC = Sys.time()
@@ -213,7 +215,7 @@ run_MCs=function(cts,idx,true_cls,K_search,dds){
   vMC=list(K=fit$G,
            cls=fit$classification,
            cls_metrics=cls_metrics,
-           time_elap=(end_vMC-start_vMC))
+           time_elap=as.numeric(end_vMC-start_vMC,units="secs"))
   rm("fit")
 
   start_rMC = Sys.time()
@@ -230,7 +232,7 @@ run_MCs=function(cts,idx,true_cls,K_search,dds){
   rMC=list(K=fit$G,
            cls=fit$classification,
            cls_metrics=cls_metrics,
-           time_elap=(end_rMC-start_rMC))
+           time_elap=as.numeric(end_rMC-start_rMC,units="secs"))
   rm("fit")
 
   return(list(lMC=lMC,vMC=vMC,rMC=rMC))
@@ -260,18 +262,6 @@ run_NMF=function(cts,true_cls,K_search){
 
   start_NMF=Sys.time()
   if(K_search[1]==1){K_search=K_search[-1]}  # iCl can't compare K=1 --> remove this
-  #cts=round(cts,0)
-  #fit=NB.MClust(Count=t(cts),K=K_search)
-
-  ########## INTNMF #############
-  #library(IntNMF)
-  #cat("\nFinding optimal K...\n")
-  #opt_ks = IntNMF::nmf.opt.k(dat=t(cts), k.range=K_search, make.plot=F)
-  #opt_k = K_search[which.max(rowMeans(opt_ks))[1]]
-  #cat("\nFitting model with optimal K...\n")
-  #fit = IntNMF::nmf.mnnals(dat=t(cts), k=opt_k)  # this package function errors out b/c of a bug in package:
-                                              # fixed manually by commenting out line "dimnames(consensus)..." line in source code
-                                              # then used devtools::install_local("IntNMF.zip") on edited package
 
   cat("\nFitting default NMF model...\n")
   all_fit = NMF::nmf(x=cts,rank=K_search)
@@ -283,9 +273,6 @@ run_NMF=function(cts,true_cls,K_search){
   fit$clusters <- apply(coef(fit), 2, function(x)which.max(x)[1])
 
   cat("\nFit complete.\n")
-  ## use NMF base package (IntNMF sources it)
-  #fit = NMF::nmf(x=t(cts),rank=opt_k)
-  #fit$clusters=apply(fit@fit@W, 1, function(x){which.max(x)[1]})  # manually set clusters (if more than 1 have same W value (unlikely) set as lower value)
 
   end_NMF=Sys.time()
 
@@ -296,5 +283,5 @@ run_NMF=function(cts,true_cls,K_search){
               K=opt_k,
               cls=fit$clusters,
               cls_metrics=cls_metrics,
-              time_elap=(end_NMF-start_NMF)))
+              time_elap=as.numeric(end_NMF-start_NMF,units="secs")))
 }
