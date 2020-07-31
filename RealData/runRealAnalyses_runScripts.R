@@ -187,3 +187,35 @@ runScripts_iCl=function(ncores=25,dataset,med_filt,MAD_filt,K_search='c(2:8)',hr
   system(run)
 }
 
+runScripts_NMF=function(dataset,med_filt,MAD_filt,K_search='c(2:8)',hrs=24){
+  dname = sprintf("%s_med%d_MAD%d",dataset,med_filt,MAD_filt)
+  ifelse(!dir.exists("./RealData/scripts"),
+         dir.create("./RealData/scripts"),
+         FALSE)
+  ifelse(!dir.exists(sprintf("./RealData/scripts/%s",dname)),
+         dir.create(sprintf("./RealData/scripts/%s",dname)),
+         FALSE)
+  cmd = rep(0, 2)
+  cmd[1] = "unlink('.RData') \n setwd('./RealData') \n source('runRealAnalyses.R') \n"
+  cmd[2] = sprintf("runRealAnalyses_NMF(dataset='%s',med_filt=%d,MAD_filt=%d,K_search=%s)\n",
+                   dataset,med_filt,MAD_filt,K_search)
+
+  ## edit from here
+  fname="NMF"
+  fname1 = sprintf("./RealData/%s/NMF_summary.out",dname)
+
+  if(file.exists(fname1)){return("NMF output exists. Job not submitted")}
+
+  out = sprintf("./RealData/scripts/%s/%s",dname,fname)
+  cmdf = paste(cmd, collapse = "")
+  write.table(cmdf, file = out, col.names = F, row.names = F, quote = F)
+
+  # have to test mem/hrs on K=1-3 maybe, then extrapolate
+  mem = 16000
+  run = sprintf("sbatch -p general --mail-type='FAIL,END' --mail-user=deelim@live.unc.edu -N 1 -n 1 --mem=%d -t %d:00:00 -J %s_%s --wrap='R CMD BATCH %s'",
+                mem,round(hrs,0),dname,fname,out)
+  print(out)
+  Sys.sleep(1)
+
+  system(run)
+}

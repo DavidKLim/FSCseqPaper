@@ -66,40 +66,40 @@ runSimAnalyses_FSC = function(K=2,n=100,LFCg=1,pDEg=0.05,beta=8,phi=0.15,
 
   # plot heatmaps
   norm_y=FSC_summary$norm_y; idx=FSC_summary$idx
-  library(pheatmap)
-  norm_y2=norm_y[idx,]; DEg_ID2=DEg_ID[idx]
-  colnames(norm_y2)=c(1:ncol(norm_y2))
-  rownames(norm_y2)=c(1:nrow(norm_y2))
-  cls2=as.numeric(as.factor(FSC_summary$cls))
-  annotation_col = data.frame(factor(cls),
-                              factor(cls2))
-  colnames(annotation_col)=c("truth","FSC")
-  rownames(annotation_col)=colnames(norm_y2)
-  newCols <- colorRampPalette(grDevices::rainbow(max(length(unique(cls)),length(unique(cls2)))))
-  mycolors_true=newCols(length(unique(cls))); names(mycolors_true)=unique(cls)[order(unique(cls))]
-  mycolors_FSC=newCols(length(unique(cls2))); names(mycolors_FSC)=unique(cls2)[order(unique(cls2))]
-  mycolors=list(truth=mycolors_true,FSC=mycolors_FSC)
-
-  annotation_row=data.frame(as.factor(abs(FSC_summary$fit$phi-phi)>0.1))
-  colnames(annotation_row)="Overestimated phi"
-  rownames(annotation_row)=rownames(norm_y2)
-  mycolors_1=c("#FFFFFF","#000000"); names(mycolors_1)=c("TRUE","FALSE")
-  mycolors2=list("Overestimated phi"=mycolors_1)
-  png(sprintf("%s/HM_disc.png",trace.folder),height=600,width=600)
-  pheatmap(log(norm_y2[DEg_ID2,order(cls,cls2)]+0.1),cluster_cols=F,annotation_col=annotation_col,annotation_row=annotation_row,annotation_colors=c(mycolors,mycolors2),main="FSC disc genes")
-  dev.off()
-  png(sprintf("%s/HM_nondisc.png",trace.folder),height=600,width=600)
-  pheatmap(log(norm_y2[!DEg_ID2,order(cls,cls2)][1:500,]+0.1),cluster_cols=F,annotation_col=annotation_col,annotation_row=annotation_row,annotation_colors=c(mycolors,mycolors2),main="FSC 500 random nondisc genes")
-  dev.off()
-  png(sprintf("%s/HM_coefs_disc.png",trace.folder),height=600,width=600)
-  pheatmap(FSC_summary$fit$coefs[DEg_ID2,],cluster_cols=F,cluster_rows=F,main="FSC coefficients, disc genes")
-  dev.off()
-  png(sprintf("%s/HM_coefs_nondisc.png",trace.folder),height=600,width=600)
-  pheatmap(FSC_summary$fit$coefs[!DEg_ID2,],cluster_cols=F,cluster_rows=F,main="FSC coefficients, nondisc genes")
-  dev.off()
-  png(sprintf("%s/phi_ests.png",trace.folder),height=600,width=600)
-  plot(FSC_summary$fit$phi,main=sprintf("Phi ests vs. gene index. True phi=%f",phi))
-  dev.off()
+  # library(pheatmap)
+  # norm_y2=norm_y[idx,]; DEg_ID2=DEg_ID[idx]
+  # colnames(norm_y2)=c(1:ncol(norm_y2))
+  # rownames(norm_y2)=c(1:nrow(norm_y2))
+  # cls2=as.numeric(as.factor(FSC_summary$cls))
+  # annotation_col = data.frame(factor(cls),
+  #                             factor(cls2))
+  # colnames(annotation_col)=c("truth","FSC")
+  # rownames(annotation_col)=colnames(norm_y2)
+  # newCols <- colorRampPalette(grDevices::rainbow(max(length(unique(cls)),length(unique(cls2)))))
+  # mycolors_true=newCols(length(unique(cls))); names(mycolors_true)=unique(cls)[order(unique(cls))]
+  # mycolors_FSC=newCols(length(unique(cls2))); names(mycolors_FSC)=unique(cls2)[order(unique(cls2))]
+  # mycolors=list(truth=mycolors_true,FSC=mycolors_FSC)
+  #
+  # annotation_row=data.frame(as.factor(abs(FSC_summary$fit$phi-phi)>0.1))
+  # colnames(annotation_row)="Overestimated phi"
+  # rownames(annotation_row)=rownames(norm_y2)
+  # mycolors_1=c("#FFFFFF","#000000"); names(mycolors_1)=c("TRUE","FALSE")
+  # mycolors2=list("Overestimated phi"=mycolors_1)
+  # png(sprintf("%s/HM_disc.png",trace.folder),height=600,width=600)
+  # pheatmap(log(norm_y2[DEg_ID2,order(cls,cls2)]+0.1),cluster_cols=F,annotation_col=annotation_col,annotation_row=annotation_row,annotation_colors=c(mycolors,mycolors2),main="FSC disc genes")
+  # dev.off()
+  # png(sprintf("%s/HM_nondisc.png",trace.folder),height=600,width=600)
+  # pheatmap(log(norm_y2[!DEg_ID2,order(cls,cls2)][1:500,]+0.1),cluster_cols=F,annotation_col=annotation_col,annotation_row=annotation_row,annotation_colors=c(mycolors,mycolors2),main="FSC 500 random nondisc genes")
+  # dev.off()
+  # png(sprintf("%s/HM_coefs_disc.png",trace.folder),height=600,width=600)
+  # pheatmap(FSC_summary$fit$coefs[DEg_ID2,],cluster_cols=F,cluster_rows=F,main="FSC coefficients, disc genes")
+  # dev.off()
+  # png(sprintf("%s/HM_coefs_nondisc.png",trace.folder),height=600,width=600)
+  # pheatmap(FSC_summary$fit$coefs[!DEg_ID2,],cluster_cols=F,cluster_rows=F,main="FSC coefficients, nondisc genes")
+  # dev.off()
+  # png(sprintf("%s/phi_ests.png",trace.folder),height=600,width=600)
+  # plot(FSC_summary$fit$phi,main=sprintf("Phi ests vs. gene index. True phi=%f",phi))
+  # dev.off()
 
 }
 

@@ -51,15 +51,15 @@ collectSims=function(sigma_g=0.1,sigma_b=0,B=1,LFCb=0,
   calculate_metrics = function(metric,summary_obj,cls,true.K,batch=NULL){
     summary=eval(parse(text=summary_obj))
     if(metric=="K"){
-      result=(summary$cls_metrics$cluster.number)
-      if(is.null(result)){result=1}
+      # result=(summary$cls_metrics$cluster.number)
+      # if(is.null(result)){result=1}
+      result=length(unique(summary$cls))
     } else if(metric=="OA"){
-      if(is.null(summary$cls_metrics$cluster.number)){result=0} else{
-        result=((summary$cls_metrics$cluster.number==true.K)^2)
-      }
+      result=((length(unique(summary$cls))==true.K)^2)
     } else if(metric=="time"){
       result=(summary$time_elap)
     } else if(metric=="ARI"){
+      if(is.null(summary$cls_metrics)){summary$cls_metrics=summary$cluster_metrics}
       result=(summary$cls_metrics$corrected.rand)
     }
 
@@ -107,28 +107,40 @@ collectSims=function(sigma_g=0.1,sigma_b=0,B=1,LFCb=0,
                       sim_index[g])
       res.file=sprintf("%s/%d_%d_%f_%f_%f_%f_sim%d",
                        dir_name,K[a],n[b],LFCg[c],pDEg[d],beta[e],phi[f],sim_index[g])
-      res1=sprintf("%s_gene_CEM_jointTRUE_res_FSC.out",res.file)
+
+      res1old=sprintf("%s_gene_CEM_jointTRUE_res_FSC.out",res.file)
+      res1=sprintf("%s_res_FSC.out",res.file)
+      if(file.exists(res1old)){file.rename(res1old,res1); print("converting name")}
+      #print(res1)
       if(file.exists(res1) & ("FSC" %in% compared_methods)){load(res1)}else if(!file.exists(res1) & ("FSC" %in% compared_methods)){next}
-      res7=sprintf("%s_gene_CEM_jointTRUE_res_FSCpred.out",res.file)
+      res7old=sprintf("%s_gene_CEM_jointTRUE_res_FSCpred.out",res.file)
+      res7=sprintf("%s_res_FSCpred.out",res.file)
+      if(file.exists(res7old)){file.rename(res7old,res7)}
+      #print(res7)
       if(file.exists(res7) & ("pFSC" %in% compared_methods)){
         load(res7)
         pFSC_summary=FSC_predict_summary
       }else if(!file.exists(res7) & ("pFSC" %in% compared_methods)){next}
       res4=sprintf("%s_KM.out",res.file)
+      #print(res4)
       if(file.exists(res4) & ("KM" %in% compared_methods)){load(res4)}else if(!file.exists(res4) & ("KM" %in% compared_methods)){next}
       res5=sprintf("%s_NBMB.out",res.file)
+      #print(res5)
       if(file.exists(res5) & ("NBMB" %in% compared_methods)){load(res5)}else if(!file.exists(res5) & ("NBMB" %in% compared_methods)){next}
       res3=sprintf("%s_HC.out",res.file)
+      #print(res3)
       if(file.exists(res3) & ("HC" %in% compared_methods)){load(res3)}else if(!file.exists(res3) & ("HC" %in% compared_methods)){next}
       res2=sprintf("%s_iCl.out",res.file)
+      #print(res2)
       if(file.exists(res2) & ("iCl" %in% compared_methods)){load(res2)}else if(!file.exists(res2) & ("iCl" %in% compared_methods)){next}
       res6=sprintf("%s_MC.out",res.file)
+      #print(res6)
       if(file.exists(res6) & (all(c("lMC","vMC","rMC") %in% compared_methods))){
         load(res6)
         lMC_summary=MC_summary$lMC; vMC_summary=MC_summary$vMC; rMC_summary=MC_summary$rMC
       }else if(!file.exists(res6) & (all(c("lMC","vMC","rMC") %in% compared_methods))){next}
-
       res8=sprintf("%s_NMF.out",res.file)
+      #print(res8)
       if(file.exists(res8) & ("NMF" %in% compared_methods)){load(res8)}else if(!file.exists(res8) & ("NMF" %in% compared_methods)){next}
 
       print(res.file)
@@ -269,7 +281,6 @@ df4batch2=collectSims(sigma_g=0.1,sigma_b=0,B=2,LFCb=2,
                      compared_methods=c("FSC","iCl","HC","KM","NBMB","NMF","lMC","vMC","rMC","pFSC"),
                      sim_index=c(1:25))
 df4batch2$df$gamma=2;df4batch2$all_sims_df$gamma=2
-df2batch=list(df=rbind(df2batch2$df,df2batch3$df),all_sims_df=rbind(df2batch2$all_sims_df,df2batch3$all_sims_df))
 
 df2batch3=collectSims(sigma_g=0.1,sigma_b=0,B=2,LFCb=3,
                       K=c(2), n=c(100), LFCg=c(2), pDEg=c(0.05), beta=c(12), phi=c(0.35),
@@ -281,9 +292,141 @@ df4batch3=collectSims(sigma_g=0.1,sigma_b=0,B=2,LFCb=3,
                       compared_methods=c("FSC","iCl","HC","KM","NBMB","NMF","lMC","vMC","rMC","pFSC"),
                       sim_index=c(1:25))
 df4batch3$df$gamma=3;df4batch3$all_sims_df$gamma=3
+
+df2batch=list(df=rbind(df2batch2$df,df2batch3$df),all_sims_df=rbind(df2batch2$all_sims_df,df2batch3$all_sims_df))
 df4batch=list(df=rbind(df4batch2$df,df4batch3$df),all_sims_df=rbind(df4batch2$all_sims_df,df4batch3$all_sims_df))
 
 save(df2batch,file=sprintf("%s/df2batch.out",res.dir)); save(df4batch,file=sprintf("%s/df4batch.out",res.dir))
 
+
+# phi=0.01 test
+df_low_phi=collectSims(sigma_g=0.1,sigma_b=0,B=1,LFCb=0,
+                K=c(4), n=c(100,200), LFCg=c(1), pDEg=c(0.025,0.05), beta=c(12), phi=c(0.01),
+                compared_methods=c("FSC","iCl","HC","KM","NBMB","NMF","lMC","vMC","rMC","pFSC"),
+                sim_index=c(1:25))
+
+save(df_low_phi,file=sprintf("%s/df_low_phi.out",res.dir))
+
+# submit_jobs(sigma_g=0.1,sigma_b=0,B=1,LFCb=0,K=4,n=c(100,200),LFCg=c(1,2),pDEg=c(0.025,0.05),beta=12,phi=0.01,sim_index=c(1:25))
+
+# pDEg=0.5 test
+df_high_pDE=collectSims(sigma_g=0.1,sigma_b=0,B=1,LFCb=0,
+                      K=c(4), n=c(100,200), LFCg=c(1), pDEg=c(0.50), beta=c(12), phi=c(0.15,0.35,0.5),
+                      compared_methods=c("FSC","iCl","HC","KM","NBMB","NMF","lMC","vMC","rMC","pFSC"),
+                      sim_index=c(1:25))
+save(df_high_pDE,file=sprintf("%s/df_high_pDE.out",res.dir))
+
+# submit_jobs(sigma_g=0.1,sigma_b=0,B=1,LFCb=0,K=4,n=c(100,200),LFCg=c(1,2),pDEg=0.5,beta=12,phi=c(0.15,0.35,0.50),sim_index=c(1:25))
+
+
+#### Plot of final_ARI vs. (final-init)_ARI
+
+## run this in every directory
+# for d in BIC*/ ; do
+# for K in {2..6}; do
+# grep -wns 'FINAL INITIALIZATION:' "${d}JOINT_CEM_${K}_0.250000_0.010000.txt" -A 1 | cut -c6- > "${d}K${K}_init_cls.txt"
+# grep -o 'Initial ARI: .*$' "${d}JOINT_CEM_${K}_0.250000_0.010000.txt" | cut -c14- > "${d}K${K}_init_ARIs.txt"
+# echo "d${d}/K${K}"
+# done
+# done
+
+
+# # in R:
+# library(mclust)
+# sigma_g=0.1; sigma_b=0; B=1; LFCb=0   # no batch
+# if(B==1){K=c(2,4); nk=c(25,50); LFCg=c(1,2); pDEg=c(0.025,0.05); beta=c(8,12); phi=c(0.15,0.35,0.5); sim_index=c(1:25)}
+# #sigma_g=0.1; sigma_b=0; B=2; LFCb=2   # no batch
+# #sigma_g=0.1; sigma_b=0; B=2; LFCb=3   # no batch
+# #if(B==1){K=c(4); nk=c(25,50); LFCg=c(1,2); pDEg=c(0.025,0.05); beta=c(12); phi=c(0.15,0.35,0.5); sim_index=c(26:100)}
+# if(B==2){
+#   K=c(2,4); nk=c(50); LFCg=c(2); pDEg=c(0.05); beta=c(12); phi=c(0.35); sim_index=c(1:25)
+# }
+# nsims=length(K)*length(nk)*length(LFCg)*length(pDEg)*length(beta)*length(phi)*length(sim_index)
+# init_ARIs = rep(NA,nsims)
+# final_ARIs = rep(NA,nsims)
+# init_methods = rep("",nsims)
+# ii=1
+# for(a in 1:length(K)){for(b in 1:length(nk)){for(c in 1:length(LFCg)){for(d in 1:length(pDEg)){for(e in 1:length(beta)){for(f in 1:length(phi)){
+#   for(g in 1:length(sim_index)){
+#   n=nk[b]*K[a]
+#   dir_name0 = sprintf("/pine/scr/d/e/deelim/out/Simulations/%f_%f/B%d_LFCb%d",
+#                      sigma_g, sigma_b, B, LFCb)
+#   data_file_name = sprintf("%s/%d_%d_%f_%f_%f_%f_sim%d_data.RData",
+#                       dir_name0, K[a], n, LFCg[c], pDEg[d], beta[e], phi[f], sim_index[g])
+#   dir_name = sprintf("%s/BIC_%d_%d_%f_%f_%f_%f_sim%d",
+#                      dir_name0, K[a], n, LFCg[c], pDEg[d], beta[e], phi[f], sim_index[g])
+#   load(data_file_name)
+#   print(data_file_name)
+#   cls = sim.dat$cls
+#
+#   res_file_name = sprintf("%s/%d_%d_%f_%f_%f_%f_sim%d_gene_CEM_jointTRUE_res_FSC.out",
+#                           dir_name0, K[a], n, LFCg[c], pDEg[d], beta[e], phi[f], sim_index[g])
+#   load(res_file_name)
+#   final_clusters = FSC_summary$cls
+#   res_K = length(unique(final_clusters))
+#
+#   C = read.table(sprintf("%s/K%d_init_cls.txt",dir_name,res_K),header=T,sep='\n')
+#   A = read.table(sprintf("%s/K%d_init_ARIs.txt",dir_name,res_K),header=F,sep='\n')
+#   init_methods[ii] = C
+#   init_ARIs[ii] = if(C=="cls_hc "){ A[1,1] } else if(C=="cls_km "){ A[2,1] } else{ A[3,1] }
+#   final_ARIs[ii] = adjustedRandIndex(final_clusters,cls)
+#
+#   ii = ii+1
+# }}}}}}}
+#
+# png("/pine/scr/d/e/deelim/out/deltaARI4.png")
+# plot(x=init_ARIs, y=final_ARIs-init_ARIs)
+# dev.off()
+#
+# #init_ARIs4=init_ARIs; final_ARIs4=final_ARIs
+#
+# init_ARIs = c(init_ARIs1,init_ARIs2,init_ARIs3,init_ARIs4)
+# final_ARIs = c(final_ARIs1,final_ARIs2,final_ARIs3,final_ARIs4)
+# png("/pine/scr/d/e/deelim/out/deltaARI.png",width=900,height=900,res=150)
+# plot(x=init_ARIs, y=final_ARIs-init_ARIs, ylab="Change in ARI (Final - Initial)",xlab="Initial ARI",main="Change in ARI (final - initial) vs Initial ARI")
+# dev.off()
+#
+# code_location = "collectSimResults.R"
+#
+# save(list=c("init_ARIs","final_ARIs","code_location"),file="deltaARI.RData")
+
+##### Fixing TPR/FPR (re-calculate after current FSCseq runs!!!!!!!)
+recalc_TPR=function(B,LFCb,K,n,LFCg,pDEg,beta,phi,sim_index){
+  for(a in 1:length(K)){for(b in 1:length(n)){for(c in 1:length(LFCg)){for(d in 1:length(pDEg)){for(e in 1:length(beta)){for(f in 1:length(phi)){
+    # tabulate all results for all sim datasets for each condition
+    for(g in 1:length(sim_index)){
+      prefix=sprintf("/pine/scr/d/e/deelim/out/Simulations/0.100000_0.000000/B%d_LFCb%d/%d_%d_%f_%f_%f_%f_sim%d",
+                     B,LFCb,K[a],n[b],LFCg[c],pDEg[d],beta[e],phi[f],sim_index[g])
+      data.file = sprintf("%s_data.RData",prefix)
+      res.file = sprintf("%s_res_FSC.out",prefix)
+      load(data.file)
+      DEg_ID=sim.dat$DEg_ID
+      load(res.file)
+      print(data.file)
+      FSC_disc=FSC_summary$fit$discriminatory
+      idx=FSC_summary$idx
+      FSC_summary$TPR = sum(DEg_ID[idx] & FSC_disc)/sum(DEg_ID[idx])
+      FSC_summary$FPR = sum(!DEg_ID[idx] & FSC_disc)/sum(!DEg_ID[idx])
+      save(FSC_summary, file=res.file)
+      print("done")
+    }
+  }}}}}}
+}
+
+# main (DONT RUN)
+# recalc_TPR(B=1,LFCb=0,K=c(2), n=c(50,100), LFCg=c(1,2), pDEg=c(0.025,0.05), beta=c(8,12), phi=c(0.15,0.35,0.5),sim_index=c(1:25))
+# recalc_TPR(B=1,LFCb=0,K=c(4), n=c(100,200), LFCg=c(1,2), pDEg=c(0.025,0.05), beta=c(8,12), phi=c(0.15,0.35,0.5),sim_index=c(1:25))
+# recalc_TPR(B=1,LFCb=0,K=c(4), n=c(100,200), LFCg=c(1,2), pDEg=c(0.025,0.05), beta=c(12), phi=c(0.15,0.35,0.5),sim_index=c(1:100))
+#
+# # batch (DONT RUN)
+# recalc_TPR(B=2,LFCb=2,K=c(2), n=c(100), LFCg=c(2), pDEg=c(0.05), beta=c(12), phi=c(0.35), sim_index=c(1:25))
+# recalc_TPR(B=2,LFCb=2,K=c(4), n=c(200), LFCg=c(2), pDEg=c(0.05), beta=c(12), phi=c(0.35), sim_index=c(1:25))
+# recalc_TPR(B=2,LFCb=3,K=c(2), n=c(100), LFCg=c(2), pDEg=c(0.05), beta=c(12), phi=c(0.35), sim_index=c(1:25))
+# recalc_TPR(B=2,LFCb=3,K=c(4), n=c(200), LFCg=c(2), pDEg=c(0.05), beta=c(12), phi=c(0.35), sim_index=c(1:25))
+
+# phi=0.01 test (done)
+recalc_TPR(B=1,LFCb=0,K=c(4), n=c(100), LFCg=c(1), pDEg=c(0.025), beta=c(12), phi=c(0.01), sim_index=c(1:25))
+# pDEg=0.5 test (done)
+recalc_TPR(B=1,LFCb=0,K=c(4), n=c(100), LFCg=c(1), pDEg=c(0.50), beta=c(12), phi=c(0.15,0.35,0.5), sim_index=c(1:25))
 
 

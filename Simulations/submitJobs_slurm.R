@@ -61,24 +61,46 @@ submit_jobs(sigma_g=0.1,sigma_b=0,B=1,LFCb=0,K=2,n=c(50,100),sim_index=c(1:25))
 submit_jobs(sigma_g=0.1,sigma_b=0,B=1,LFCb=0,K=4,n=c(100,200),sim_index=c(1:25))
 # submit additional sim runs for main table
 submit_jobs(method="FSC",sigma_g=0.1,sigma_b=0,B=1,LFCb=0,K=4,beta=12,sim_index=c(26:100))
-# submit batch-affected simulation cases (LFCb=2,3)
-submit_jobs(sigma_g=0.1,sigma_b=0,B=2,LFCb=2,K=2,n=100,LFCg=0.05,beta=12,phi=0.35,sim_index=c(1:25))
-submit_jobs(sigma_g=0.1,sigma_b=0,B=2,LFCb=2,K=4,n=200,LFCg=0.05,beta=12,phi=0.35,sim_index=c(1:25))
-submit_jobs(sigma_g=0.1,sigma_b=0,B=2,LFCb=3,K=2,n=100,LFCg=0.05,beta=12,phi=0.35,sim_index=c(1:25))
-submit_jobs(sigma_g=0.1,sigma_b=0,B=2,LFCb=3,K=4,n=200,LFCg=0.05,beta=12,phi=0.35,sim_index=c(1:25))
+# submit batch-affected simulation cases (LFCb=2,3), phi=0.35
+submit_jobs(sigma_g=0.1,sigma_b=0,B=2,LFCb=2,K=2,n=100,LFCg=2,pDEg=0.05,beta=12,phi=0.35,sim_index=c(1:25))
+submit_jobs(sigma_g=0.1,sigma_b=0,B=2,LFCb=2,K=4,n=200,LFCg=2,pDEg=0.05,beta=12,phi=0.35,sim_index=c(1:25))
+submit_jobs(sigma_g=0.1,sigma_b=0,B=2,LFCb=3,K=2,n=100,LFCg=2,pDEg=0.05,beta=12,phi=0.35,sim_index=c(1:25))
+submit_jobs(sigma_g=0.1,sigma_b=0,B=2,LFCb=3,K=4,n=200,LFCg=2,pDEg=0.05,beta=12,phi=0.35,sim_index=c(1:25))
+## phi=0.50
+submit_jobs(sigma_g=0.1,sigma_b=0,B=2,LFCb=2,K=2,n=100,LFCg=2,pDEg=0.05,beta=12,phi=0.50,sim_index=c(1:25))
+submit_jobs(sigma_g=0.1,sigma_b=0,B=2,LFCb=2,K=4,n=200,LFCg=2,pDEg=0.05,beta=12,phi=0.50,sim_index=c(1:25))
+submit_jobs(sigma_g=0.1,sigma_b=0,B=2,LFCb=3,K=2,n=100,LFCg=2,pDEg=0.05,beta=12,phi=0.50,sim_index=c(1:25))
+submit_jobs(sigma_g=0.1,sigma_b=0,B=2,LFCb=3,K=4,n=200,LFCg=2,pDEg=0.05,beta=12,phi=0.50,sim_index=c(1:25))
 
 
-########### EXTRA NMF RUNS (RUN SEPARATELY) #############
-# submit all methods (submitted)    # do this first, then wait before doing batch
-submit_jobs(method="NMF",sigma_g=0.1,sigma_b=0,B=1,LFCb=0,K=2,n=c(50,100),sim_index=c(1:25))
-submit_jobs(method="NMF",sigma_g=0.1,sigma_b=0,B=1,LFCb=0,K=4,n=c(100,200),sim_index=c(1:25))
-# submit batch-affected simulation cases (LFCb=2,3) (NEED TO SUBMIT)
-submit_jobs(method="NMF",sigma_g=0.1,sigma_b=0,B=2,LFCb=2,K=2,n=100,LFCg=0.05,beta=12,phi=0.35,sim_index=c(1:25))
-submit_jobs(method="NMF",sigma_g=0.1,sigma_b=0,B=2,LFCb=2,K=4,n=200,LFCg=0.05,beta=12,phi=0.35,sim_index=c(1:25))
-submit_jobs(method="NMF",sigma_g=0.1,sigma_b=0,B=2,LFCb=3,K=2,n=100,LFCg=0.05,beta=12,phi=0.35,sim_index=c(1:25))
-submit_jobs(method="NMF",sigma_g=0.1,sigma_b=0,B=2,LFCb=3,K=4,n=200,LFCg=0.05,beta=12,phi=0.35,sim_index=c(1:25))
+########### EXTRA NMF RUNS (that were run separately) ############# (DONE)
+# # submit all methods (DONE)    # do this first, then wait before doing batch
+# submit_jobs(method="NMF",sigma_g=0.1,sigma_b=0,B=1,LFCb=0,K=2,n=c(50,100),sim_index=c(1:25))
+# submit_jobs(method="NMF",sigma_g=0.1,sigma_b=0,B=1,LFCb=0,K=4,n=c(100,200),sim_index=c(1:25))
+# # submit batch-affected simulation cases (LFCb=2,3) (DONE)
+# submit_jobs(method="NMF",sigma_g=0.1,sigma_b=0,B=2,LFCb=2,K=2,n=100,LFCg=2,pDEg=0.05,beta=12,phi=0.35,sim_index=c(1:25))
+# submit_jobs(method="NMF",sigma_g=0.1,sigma_b=0,B=2,LFCb=2,K=4,n=200,LFCg=2,pDEg=0.05,beta=12,phi=0.35,sim_index=c(1:25))
+# submit_jobs(method="NMF",sigma_g=0.1,sigma_b=0,B=2,LFCb=3,K=2,n=100,LFCg=2,pDEg=0.05,beta=12,phi=0.35,sim_index=c(1:25))
+# submit_jobs(method="NMF",sigma_g=0.1,sigma_b=0,B=2,LFCb=3,K=4,n=200,LFCg=2,pDEg=0.05,beta=12,phi=0.35,sim_index=c(1:25))
 
-# # # tests
+########### phi=0.01 test (this is the case FSCseq did poorest in the main text, although better than other methods) ########### (SUBMITTED) #########
+# simAllData function from SimulateRNASeqData.R script
+simAllData(K=4,n_k=c(25,50),LFCg=c(1,2),pDEg=c(0.025,0.05),beta0=12,phi0=0.01,B=B,LFCb=LFCb,25)
+
+submit_jobs(sigma_g=0.1,sigma_b=0,B=1,LFCb=0,K=4,n=100,LFCg=1,pDEg=0.025,beta=12,phi=0.01,sim_index=c(1:25))
+submit_jobs(method=c("FSC","iCl","MC","Others","NMF"),sigma_g=0.1,sigma_b=0,B=1,LFCb=0,K=4,n=c(100,200),LFCg=c(1),pDEg=c(0.025,0.05),beta=12,phi=0.01,sim_index=c(1:25))
+
+########### pDEg=0.50 test (this is the case FSCseq did poorest in the main text, although better than other methods) ########### (SUBMITTED) ##########
+simAllData(K=4,n_k=c(25,50),LFCg=c(1,2),pDEg=0.5,beta0=12,phi0=c(0.15,0.35,0.5),B=B,LFCb=LFCb,25)
+
+submit_jobs(sigma_g=0.1,sigma_b=0,B=1,LFCb=0,K=4,n=100,LFCg=1,pDEg=0.50,beta=12,phi=c(0.15,0.35,0.50),sim_index=c(1:25))
+submit_jobs(method=c("FSC","iCl","MC","Others","NMF"),sigma_g=0.1,sigma_b=0,B=1,LFCb=0,K=4,n=c(100,200),LFCg=c(1),pDEg=0.5,beta=12,phi=c(0.15,0.35,0.50),sim_index=c(1:25))
+
+
+
+# submit_jobs(method=c("iCl"),sigma_g=0.1,sigma_b=0,B=1,LFCb=0,K=4,n=100,LFCg=1,pDEg=0.025,beta=12,phi=0.01,sim_index=c(1)) # seff 61142943
+
+# # # tests NMF
 # submit_jobs(method=c("NMF"),sigma_g=0.1,sigma_b=0, B=1, LFCb=0,
 #             K=c(2), n=c(50), LFCg=c(1), pDEg=c(0.025), beta=c(8), phi=c(0.15),
 #             K_search='c(2:6)', lambda_search='seq(0.25,5,0.25)', alpha_search='c(0.01,seq(0.05,0.5,0.05))',
@@ -108,6 +130,35 @@ submit_jobs(method="NMF",sigma_g=0.1,sigma_b=0,B=2,LFCb=3,K=4,n=200,LFCg=0.05,be
 #                    sigma_g=0.1,sigma_b=0,B=1,LFCb=0,K_search=c(2:6),sim_index=1)
 # system("ls /pine/scr/d/e/deelim/out/Simulations/B1_LFCb0/*_NMF.out")
 # load("/pine/scr/d/e/deelim/out/Simulations/B1_LFCb0/2_50_1.000000_0.025000_8.000000_0.150000_sim1_NMF.out")
+# ls()
+# NMF_summary$cls_metrics
+
+# ## running interactively
+# source("runSimAnalyses.R")
+# n=c(100,200);LFCg=c(1,2);pDEg=c(0.025,0.05);phi=0.01;sim_index=c(1:25)
+# for(a in 1:length(n)){for(b in 1:length(LFCg)){for(d in 1:length(pDEg)){for(e in 1:length(phi)){for(f in 1:length(sim_index)){
+#   if(file.exists(sprintf("/pine/scr/d/e/deelim/out/Simulations/0.100000_0.000000/B1_LFCb0/4_%d_%f_%f_12.000000_%f_sim%d_res_FSCpred.out",
+#                          n[a],LFCg[b],pDEg[d],phi[e],sim_index[f]))){ next }
+#   runSimAnalyses_FSC(K=4,n=n[a],LFCg=LFCg[b],pDEg=pDEg[d],beta=12,phi=phi[e],
+#                      sigma_g=0.1,sigma_b=0,B=1,LFCb=0,
+#                      K_search=c(2:6),lambda_search=seq(0.25,5,0.25),alpha_search=c(0.01,seq(0.05,0.5,0.05)),
+#                      sim_index=sim_index[f],ncores=1,nMB=5,trace=T)
+# }}}}}
+# n=c(100,200);LFCg=c(1,2);pDEg=c(0.5);phi=c(0.15,0.35,0.5);sim_index=c(1:25)
+# for(a in 1:length(n)){for(b in 1:length(LFCg)){for(d in 1:length(pDEg)){for(e in 1:length(phi)){for(f in 1:length(sim_index)){
+#   if(file.exists(sprintf("/pine/scr/d/e/deelim/out/Simulations/0.100000_0.000000/B1_LFCb0/4_%d_%f_%f_12.000000_%f_sim%d_res_FSCpred.out",
+#                          n[a],LFCg[b],pDEg[d],phi[e],sim_index[f]))){ next }
+#   runSimAnalyses_FSC(K=4,n=n[a],LFCg=LFCg[b],pDEg=pDEg[d],beta=12,phi=phi[e],
+#                      sigma_g=0.1,sigma_b=0,B=1,LFCb=0,
+#                      K_search=c(2:6),lambda_search=seq(0.25,5,0.25),alpha_search=c(0.01,seq(0.05,0.5,0.05)),
+#                      sim_index=sim_index[f],ncores=1,nMB=5,trace=T)
+# }}}}}
+#
+# runSimAnalyses_FSC(K=4,n=200,LFCg=1,pDEg=0.05,beta=12,phi=0.01,
+#                    sigma_g=0.1,sigma_b=0,B=1,LFCb=0,
+#                    K_search=c(2:6),lambda_search=seq(0.25,5,0.25),alpha_search=c(0.01,seq(0.05,0.5,0.05)),
+#                    sim_index=1,ncores=1,nMB=5,trace=T)
+# load("/pine/scr/d/e/deelim/out/Simulations/0.100000_0.000000/B1_LFCb0/4_200_1.000000_0.050000_12.000000_0.010000_sim1_res_FSCpred.out")
 # ls()
 # NMF_summary$cls_metrics
 

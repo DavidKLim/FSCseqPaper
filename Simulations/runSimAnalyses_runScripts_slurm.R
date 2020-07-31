@@ -25,10 +25,11 @@ runFSCs=function(ncores=1,sigma_g=0.1,sigma_b=0, B=1, LFCb=0,
     # submit job only if the FSC .out files do not exist
     if(!file.exists(res1) & !file.exists(res2)){
 
-      mem = 5000 + 500*(n[b]==200)^2
-      hrs = 12*(n[b]==50) + 18*(n[b]==100) + 30*(n[b]==200)
+      mem = 10000 + 500*(n[b]==200)^2
+      hrs = 24*(n[b]==50) + 36*(n[b]==100) + 48*(n[b]==200)
 
-      run = sprintf("sbatch -p general -N 1 -n %d --mem=%dg -t %d:00:00 -J %s_FSC --wrap='R CMD BATCH %s'",ncores,mem,hrs,fname,out_script)
+      run = sprintf("sbatch -p general -N 1 -n %d --mem=%d -t %d:00:00 -J %s_FSC --wrap='R CMD BATCH %s'",ncores,mem,hrs,fname,out_script)
+      print(run)
       Sys.sleep(0.2)
       system(run)
     }
@@ -48,8 +49,9 @@ runMCs=function(sigma_g=0.1,sigma_b=0, B=1, LFCb=0,
     out_script=sprintf("%s/%s",dir_name2,fname)
     if(!file.exists(res.file)){
       mem = 10
-      mins = 10*(n[b]==50) + 20*(n[b]==100) + 80*(n[b]==200)
+      mins = 20*(n[b]==50) + 40*(n[b]==100) + 80*(n[b]==200)
       run = sprintf("sbatch -p general -N 1 -n 1 --mem=%dg -t %d:00 -J %s --wrap='R CMD BATCH %s'",mem,mins,fname,out_script)
+      print(run)
       Sys.sleep(0.2)
       system(run)
     }
@@ -69,9 +71,9 @@ runiCls=function(ncores=5,sigma_g=0.1,sigma_b=0, B=1, LFCb=0,
     out_script=sprintf("%s/%s",dir_name2,fname)
     if(!file.exists(res.file)){
       mem = (1500 + 1000*(n[b]==200))*ncores
-      hrs = round((20 + 20*(n[b]==200))/ncores,0)
+      hrs = round((40 + 40*(n[b]==200))/ncores,0)
       run = sprintf("sbatch -p general -N 1 -n %d --mem=%d -t %d:00:00 -J %s --wrap='R CMD BATCH %s'",ncores,mem,hrs,fname,out_script)
-
+      print(run)
       Sys.sleep(0.2)
       system(run)
     }
@@ -93,9 +95,9 @@ runOthers=function(sigma_g=0.1,sigma_b=0, B=1, LFCb=0,
     out_script=sprintf("%s/%s_others",dir_name2,fname)
     if(!file.exists(res.file1) | !file.exists(res.file2) | !file.exists(res.file3)){
       mem = 3
-      mins = 30 + 30*(n[b]==200)    # 10-15 minutes. 20 for n=100, 30 for n=200
+      mins = 60 + 60*(n[b]==200)    # 10-15 minutes. 20 for n=100, 30 for n=200
       run = sprintf("sbatch -p general -N 1 -n 1 --mem=%dg -t %d:00 -J %s --wrap='R CMD BATCH %s'",mem,mins,fname,out_script)
-
+      print(run)
       Sys.sleep(0.2)
       system(run)
     }
@@ -114,9 +116,9 @@ runNMFs=function(sigma_g=0.1,sigma_b=0, B=1, LFCb=0,
     out_script=sprintf("%s/%s_NMF",dir_name2,fname)
     if(!file.exists(res.file)){
       mem = 2000
-      mins = 120 + 60*as.integer(n[b]/100)    # NEED TO PROFILE FOR N=50/100/200
-      run = sprintf("sbatch -p general -N 1 -n 1 --mem=%d -t %d:00 -J %s --wrap='R CMD BATCH %s'",mem,mins,fname,out_script)
-
+      mins = 180 + 60*(n[b]==100) + 300*(n[b]==200)    # NEED TO PROFILE FOR N=50/100/200
+      run = sprintf("sbatch -p general -N 1 -n 1 --mem=%d -t %d:00 -J %s_NMF --wrap='R CMD BATCH %s'",mem,mins,fname,out_script)
+      print(run)
       Sys.sleep(0.2)
       system(run)
     }

@@ -240,16 +240,24 @@ run_MCs=function(cts,idx,true_cls,K_search,dds){
 run_FSCseq_predict=function(sim.dat,FSC_summary){
   library(FSCseq)
   cts_pred=sim.dat$cts_pred; cls_pred=sim.dat$cls_pred
-  fit=FSC_summary$fit; idx=FSC_summary$idx
+  # fit=FSC_summary$fit; idx=FSC_summary$idx
 
-  FSCseq_predict_results = FSCseq::FSCseq_predict_workflow(fit=fit,cts=sim.dat$cts,cts_pred=cts_pred,idx=idx)
+  FSC_summary$processed.dat=list()
+  FSC_summary$processed.dat$idx=FSC_summary$idx
+  FSC_summary$results=list()
+  FSC_summary$results$fit=FSC_summary$fit
 
-  res=FSCseq_predict_results$results
-  pARI = adjustedRandIndex(res$clusters,cls_pred)
+  # FSCseq_predict_results = FSCseq::FSCseq_predict_workflow(fit=fit,cts=sim.dat$cts,cts_pred=cts_pred,idx=idx)
+  FSCseq_predict_results = FSCseq::FSCseq_predict_workflow(res=FSC_summary, X_covar_train = NULL, cts_train=sim.dat$cts, SF_train=NULL, batch_train=NULL,
+                                                            X_covar_pred = NULL, cts_pred=cts_pred, batch_pred=NULL, coding="reference")
 
-  cls_metrics=cluster.stats(d=NULL,res$clusters,cls_pred,compareonly=T)
+  # res=FSCseq_predict_results$results
+  res=FSCseq_predict_results
+  pARI = adjustedRandIndex(res$pred_cls,cls_pred)
+
+  cls_metrics=cluster.stats(d=NULL,res$pred_cls,cls_pred,compareonly=T)
   return(list(fit=res,
-              cls=res$clusters,
+              cls=res$pred_cls,
               pARI=pARI,
               cls_metrics=cls_metrics))
 }

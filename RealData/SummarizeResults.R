@@ -10,13 +10,14 @@ tabulateResults = function(dataset=c("BRCA_pure","BRCA_full"),med_filt=500,MAD_f
   iCl.file=sprintf("%s/iCl_summary.out",res_dir)
   HC.file=sprintf("%s/HC_summary.out",res_dir)
   KM.file=sprintf("%s/KM_summary.out",res_dir)
+  NMF.file=sprintf("%s/NMF_summary.out",res_dir)
   NBMB.file=sprintf("%s/NBMB_summary.out",res_dir)
   lMC.file=sprintf("%s/lMC_summary.out",res_dir)
   vMC.file=sprintf("%s/vMC_summary.out",res_dir)
   rMC.file=sprintf("%s/rMC_summary.out",res_dir)
 
   load(FSC.file_F); resF=res; load(FSC.file_T); resT=res
-  load(iCl.file);load(HC.file);load(KM.file);load(NBMB.file);load(lMC.file);load(vMC.file);load(rMC.file)
+  load(iCl.file);load(HC.file);load(KM.file);load(NBMB.file);load(NMF.file);load(lMC.file);load(vMC.file);load(rMC.file)
   load(sprintf("%s_env.RData",dataset))
 
   #idx = (rowMeds>=med_filt) & (mads >= quantile(mads,MAD_filt/100))
@@ -28,7 +29,7 @@ tabulateResults = function(dataset=c("BRCA_pure","BRCA_full"),med_filt=500,MAD_f
   FSCadj_summary=list(cls=resT$clusters,K=length(unique(resT$clusters)))
 
   summaries = c("anno_summary","FSC_summary","FSCadj_summary","iCl_summary",
-                "HC_summary","KM_summary","NBMB_summary","lMC_summary","vMC_summary","rMC_summary")
+                "HC_summary","KM_summary","NBMB_summary","NMF_summary","lMC_summary","vMC_summary","rMC_summary")
 
   metrics=c("K","RI","NID","NVI","NMI","ARI")
   # RI(up),NID(down),NVI(down),NMI(up),ARI(up),ASW(up),VI(down),PG(up),dunn(up),dunn2(up),entropy(down),ch(up),wb.ratio(down),sindex(up)
@@ -153,18 +154,19 @@ mycolors1 = list(lMC=mycolors_lMC,KM=mycolors_KM,FSC=mycolors_FSC,FSCadj=mycolor
 # colors/breaks #
 showpanel <- function(Colors){image(matrix(1:length(Colors), ncol=1), col=Colors, xaxt="n", yaxt="n" )}
 oldpar <- par(mfrow=c(1,1))
-my_cols<-colorRampPalette( c("green", "black", "red"), space="rgb")(100)
+my_cols<-colorRampPalette( c("yellow", "black", "cyan"), space="rgb")(100)
 myBreaks <- seq(-2, 2, length.out=101)
 dev.off()
 
 # plot pheatmap PAM50 #
 library(pheatmap)
 rownames(raw_norm_y) = genelist_all
-png("Results/Fig3.png",height=850,width=800)
+# png("Results/Fig3.png",height=850,width=800,res=300,type="cairo")
 pheatmap(log(raw_norm_y[genelist_all %in% pam50,order(cls,resT$clusters,resF$clusters,lMC_summary$cls)]+0.1),scale="row",cluster_cols=F,
          annotation_col=annotation_col,annotation_row=annotation_row,annotation_colors=c(mycolors1,mycolors2), color=my_cols,show_colnames=F,
-         breaks=myBreaks,main="TCGA BRCA High Purity Samples, PAM50 Genes with Annotated Exclusions from Pre-filtering and Analyses")
-dev.off()
+         breaks=myBreaks,main="TCGA BRCA High Purity Samples, PAM50 Genes with Annotated Exclusions from Pre-filtering and Analyses",
+         height=12,width=11,filename="Results/Fig3.png")
+# dev.off()
 
 # for prelim presentation
 # draw_colnames_45 <- function (coln, gaps, ...) {
@@ -194,19 +196,21 @@ load("./BRCA_pure_med500_MAD50/HC_summary.out")
 load("./BRCA_pure_med500_MAD50/vMC_summary.out")
 load("./BRCA_pure_med500_MAD50/rMC_summary.out")
 load("./BRCA_pure_med500_MAD50/NBMB_summary.out")
+load("./BRCA_pure_med500_MAD50/NMF_summary.out")
 load("./BRCA_pure_med500_MAD50/iCl_summary.out")
 
 annotation_col = data.frame(factor(rMC_summary$cls),
                             factor(vMC_summary$cls),
                             factor(lMC_summary$cls),
                             factor(NBMB_summary$cls),
+                            factor(NMF_summary$cls),
                             factor(KM_summary$cls),
                             factor(HC_summary$cls),
                             factor(iCl_summary$cls),
                             factor(resF$clusters),
                             factor(resT$clusters),
                             factor(cls))
-colnames(annotation_col)=c("rMC","vMC","lMC","NBMB","KM","HC","iCl","FSC","FSCadj","Annotated")
+colnames(annotation_col)=c("rMC","vMC","lMC","NBMB","NMF","KM","HC","iCl","FSC","FSCadj","Annotated")
 rownames(annotation_col)=colnames(cts)
 
 newCols <- colorRampPalette(grDevices::rainbow(8))
@@ -220,6 +224,8 @@ mycolors_KM=newCols(3)[c(2,1)]
 mycolors_HC=newCols(3)[c(2,1)]
 mycolors_iCl=newCols(8)[c(1:8)]
 mycolors_NBMB=newCols(4)[c(1,2,4,3)]
+mycolors_NMF=newCols(3)[c(2,1)]
+
 names(mycolors_anno)=unique(cls)[order(unique(cls))]
 names(mycolors_FSC)=unique(resF$clusters)[order(unique(resF$clusters))]
 names(mycolors_FSCadj)=unique(resT$clusters)[order(unique(resT$clusters))]
@@ -230,18 +236,19 @@ names(mycolors_KM)=unique(KM_summary$cls)[order(unique(KM_summary$cls))]
 names(mycolors_HC)=unique(HC_summary$cls)[order(unique(HC_summary$cls))]
 names(mycolors_iCl)=unique(iCl_summary$cls)[order(unique(iCl_summary$cls))]
 names(mycolors_NBMB)=unique(NBMB_summary$cls)[order(unique(NBMB_summary$cls))]
+names(mycolors_NMF)=unique(NMF_summary$cls)[order(unique(NMF_summary$cls))]
 
 
 mycolors1 = list(rMC=mycolors_rMC,vMC=mycolors_vMC,lMC=mycolors_lMC,
-                 NBMB=mycolors_NBMB,KM=mycolors_KM,HC=mycolors_HC,
+                 NBMB=mycolors_NBMB,NMF=mycolors_NMF,KM=mycolors_KM,HC=mycolors_HC,
                  iCl=mycolors_iCl,FSC=mycolors_FSC,FSCadj=mycolors_FSCadj,Annotated=mycolors_anno)
 
 # plot pheatmap all disc genes from FSCadj #
-png("Results/SFig1.png",height=1000,width=800)
+# png("Results/SFig1.png",height=1000,width=800,res=300,type="cairo")
 pheatmap(log(norm_y[idx,order(cls,resT$clusters,resF$clusters,lMC_summary$cls,vMC_summary$cls,rMC_summary$cls)][resT$discriminatory,]+0.1),scale="row",cluster_cols=F,
          annotation_col=annotation_col,annotation_colors=mycolors1, color=my_cols,show_colnames=F,show_rownames=F,
-         breaks=myBreaks,main="TCGA BRCA High Purity Samples, Cluster-discriminatory Genes")
-dev.off()
+         breaks=myBreaks,main="TCGA BRCA High Purity Samples, Cluster-discriminatory Genes",height=14,width=11,filename="Results/SFig1.png")
+# dev.off()
 
 ####################################################################################################################
 
@@ -348,9 +355,13 @@ p2=ggplot(bDOWN_df2, aes(x=Pathways, y=pval)) +
   geom_bar(stat = "identity") + ylab("-log(p-value)") + xlab("Pathways") +
   coord_flip()+ggtitle("basalDOWN")
 # p2
-png("./Results/SFig3.png",width=900,height=900)
-grid.arrange(p1,p2)
-dev.off()
+
+# png("./Results/SFig3.png",width=900,height=900,res=300,type="cairo")
+# grid.arrange(p1,p2)
+# dev.off()
+
+p = arrangeGrob(p1,p2,nrow=2)
+ggsave(file="./Results/SFig3.png",width=10,height=10, p)
 
 ####################################################################################################################
 
@@ -406,12 +417,82 @@ mycolors1 = list(SigI=mycolors_I, SigU=mycolors_U,
 # colors/breaks #
 showpanel <- function(Colors){image(matrix(1:length(Colors), ncol=1), col=Colors, xaxt="n", yaxt="n" )}
 oldpar <- par(mfrow=c(1,1))
-my_cols<-colorRampPalette( c("green", "black", "red"), space="rgb")(100)
+my_cols<-colorRampPalette( c("yellow", "black", "cyan"), space="rgb")(100)
 myBreaks <- seq(-2, 2, length.out=101)
 dev.off()
 
-png("./Results/SFig4.png",height=980,width=930)
+# png("./Results/SFig4.png",height=980,width=930,res=300,type="cairo")
 pheatmap(log(norm_y[idx,order(cls,resT$clusters,resF$clusters)][resT$discriminatory,]+0.1),scale="row",cluster_cols=F,
          annotation_col=annotation_col,annotation_colors=mycolors1, color=my_cols,show_colnames=F,show_rownames=F,
-         breaks=myBreaks,main="TCGA BRCA All Samples, Disc Genes from FSCseq, Ordered by Subtype")
-dev.off()
+         breaks=myBreaks,main="TCGA BRCA All Samples, Disc Genes from FSCseq, Ordered by Subtype",height=14,width=12,filename="./Results/SFig4.png")
+# dev.off()
+
+
+####### Correlation Plots #######
+corPlots=function(dataset=c("BRCA_pure","BRCA_plate"),covars){
+  library(corrplot)
+  load(sprintf("%s_env.RData",dataset))
+  filt_idx = rowMeds>=500 & mads>=quantile(mads,0.5)
+  norm_y=norm_y[filt_idx,]
+  load(sprintf("%s_med500_MAD50/FSC_covars%s_summary.out", dataset,covars))
+  discriminatory=res$discriminatory
+  disc_norm_y = norm_y[discriminatory,]
+  cors = cor(t(disc_norm_y))
+  covar_text1 = if(dataset=="BRCA_pure"){"BRCA (high purity samples)"} else{"BRCA (all samples)"}
+  covar_text2 = if(covars=="T"){"Adjusted for Plate"} else{"Not adjusted for Plate"}
+
+  png(sprintf("%s_med500_MAD50/CEM_covars%s_corPlot.png",dataset,covars),res=300,width=1200,height=1300,type="cairo",pointsize=6); par(xpd=TRUE)
+  corrplot(cors,method="color",tl.pos = "td",tl.cex = 0.2,mar=c(0,0,3,0),tl.col = 'black',type="upper",order="hclust",diag=F,
+           main=sprintf("Correlations of %s cluster-discriminatory genes \n%s",covar_text1,covar_text2))
+  dev.off()
+}
+corPlots("BRCA_pure","F")
+corPlots("BRCA_pure","T")
+corPlots("BRCA_full","F")
+corPlots("BRCA_full","T")
+
+####### FSC2 and FSCadj2 #######
+# finding smallest model in bottom 10% of BIC
+opt_model = function(dataset,covars){
+  K_search=2:8; lambda_search=seq(0.25,5,0.25); alpha_search=c(0.01,seq(0.05,0.5,0.05))
+  npoints = length(K_search)*length(lambda_search)*length(alpha_search)
+  BICs=matrix(NA,nrow=npoints,ncol=5)
+  index=1
+  colnames(BICs) = c("K","l","a","BIC","ndisc")
+  for(c in 1:length(K_search)){for(l in 1:length(lambda_search)){for(a in 1:length(alpha_search)){
+    BICs[index,1:3] = c(K_search[c], lambda_search[l],alpha_search[a])
+    file.name=sprintf("%s_med500_MAD50/joint%d_%f_%f_gene_CEM_covars%s.out", dataset,K_search[c],lambda_search[l],alpha_search[a],covars)
+    if(file.exists(file.name)){load(file.name); BICs[index,4:5] = c(res$BIC, sum(res$discriminatory))}else{print(file.name)}
+    index=index+1
+  }}}
+
+  BICs[order(BICs[,4])[1:100,],]
+
+  return(
+    BICs[order(BICs[,4]),] [which.min(BICs[order(BICs[,4])[1:floor(npoints/10)],][,5]),]    # lowest ndisc from bottom 10% of BIC
+  )
+}
+p1=opt_model("BRCA_pure","F")
+p2=opt_model("BRCA_pure","T")
+# covarF : 2.00       0.25       0.50 8704580.49    1169.00
+# covarT : 3          1.00       0.30 9789277       1324
+f1=opt_model("BRCA_full","F")
+f2=opt_model("BRCA_full","T")
+# covarF: 5.0        1.5        0.1 42533187.3     2800.0
+# covarT: 5.00        3.25        0.05 43079204.94     2834.00
+
+check_opt_model = function(dataset,covars,K,lambda,alpha){
+  load(sprintf("%s_med500_MAD50/joint%d_%f_%f_gene_CEM_covars%s.out",dataset,K,lambda,alpha,covars))
+  load(sprintf("%s_env.RData",dataset))
+  library(mclust)
+  return(list(ARI=adjustedRandIndex(res$clusters,cls),
+              ndisc=sum(res$discriminatory)))
+}
+check_opt_model("BRCA_pure","F",p1[1],p1[2],p1[3])
+check_opt_model("BRCA_pure","T",p2[1],p2[2],p2[3])
+# covarF : 2.00       0.25       0.50 8704580.49    1169.00   ----> ARI = 0.486
+# covarT : 3          1.00       0.30 9789277       1324   ----> ARI = 0.610
+check_opt_model("BRCA_full","F",f1[1],f1[2],f1[3])
+check_opt_model("BRCA_full","T",f2[1],f2[2],f2[3])
+# covarF: 5.0        1.5        0.1 42533187.3     2800.0     ----> ARI = 0.254
+# covarT: 5.00        3.25        0.05 43079204.94     2834.00   ----> ARI = 0.294

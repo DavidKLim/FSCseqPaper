@@ -309,3 +309,44 @@ runRealAnalyses_others = function(dataset,med_filt=500,MAD_filt=50,
 
 }
 
+runRealAnalyses_NMF = function(dataset,med_filt=500,MAD_filt=50,
+                                  K_search=c(2:8)){
+
+  library(NMF)
+  library(fpc)
+  nmf.options(shared.memory=F)
+  nmf.options(pbackend="seq")
+
+  start_NMF=Sys.time()
+  if(K_search[1]==1){K_search=K_search[-1]}  # iCl can't compare K=1 --> remove this
+
+  cat("\nFitting default NMF model...\n")
+
+  dir_name="."
+  load(sprintf("%s/%s_env.RData",dir_name,dataset))
+  idx = (rowMeds>=med_filt) & (mads >= quantile(mads,MAD_filt/100))
+  cts = norm_y[idx,]
+
+  all_fit = NMF::nmf(x=cts,rank=K_search)
+  #all_fit1 = NMF::nmf(x=log(cts+0.1),rank=K_search)   # ??
+  opt_k_index = which.max(all_fit$measures$silhouette.consensus)[1]
+  opt_k = all_fit$measures$rank[opt_k_index]  # Highest average silhouette width, if >1 highest, lowest index selected.
+
+  fit = all_fit$fit[[opt_k_index]]
+  fit$clusters <- apply(coef(fit), 2, function(x)which.max(x)[1])
+
+  cat("\nFit complete.\n")
+
+  end_NMF=Sys.time()
+
+  cls_metrics = cluster.stats(d=NULL,fit$clusters,true_cls,compareonly=T)
+  #cat(cls_metrics)
+  NMF_summary = list(fit=fit,
+              K=opt_k,
+              cls=fit$clusters,
+              cls_metrics=cls_metrics,
+              time_elap=(end_NMF-start_NMF))
+  save(NMF_summary,file=sprintf("%s/%s_med%d_MAD%d/NMF_summary.out",dir_name,dataset,med_filt,MAD_filt))
+  return(NMF_summary)
+
+}

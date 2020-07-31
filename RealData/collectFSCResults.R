@@ -41,3 +41,34 @@ fname_fullF = collect_FSC(dataset="BRCA_full",K_search=c(2:15),covariates="F")
 fname_fullT = collect_FSC(dataset="BRCA_full",K_search=c(2:15),covariates="T")
 
 
+## correlation of cluster-disc genes, and selecting smallest model among bottom 10% of BICs. done on longleaf (slightly different scripts and directories)
+# # gene-gene correlation plots
+# load("BRCA_pure3_2_env.RData")
+# filt_idx = rowMeds>=500 & mads>=quantile(mads,0.5)
+# norm_y=norm_y[filt_idx,]
+#load("Real_Data/BRCA_pure3_2_med500_MAD50/joint5_1.750000_0.010000_gene_CEM_covarsF.out")
+#load("Real_Data/BRCA_pure3_2_med500_MAD50/joint3_0.750000_0.250000_gene_CEM_covarsT.out")
+# discriminatory=res$discriminatory
+# disc_norm_y = norm_y[discriminatory,]
+# cors = cor(t(disc_norm_y))
+# png("Real_Data/BRCA_pure3_2_med500_MAD50/CEM_covarsF_corPlot.png",res=120,width=900,height=900); corrplot(cors,tl.pos = "td",tl.cex = 0.2,mar=c(0,0,5,0),tl.col = 'black',type="upper",order="hclust",diag=F,main="Correlations of BRCA cluster-discriminatory genes, Not adjusted for Plate"); dev.off()
+#
+# # finding smallest model in bottom 10% of BIC
+# K_search=2:8; lambda_search=seq(0.25,5,0.25); alpha_search=c(0.01,seq(0.05,0.5,0.05))
+# setwd("/pine/scr/d/e/deelim/out/Real_Data/BRCA_pure3_2_med500_MAD50")
+# npoints = length(K_search)*length(lambda_search)*length(alpha_search)
+# BICs=matrix(NA,nrow=npoints,ncol=5)
+# index=1
+# colnames(BICs) = c("K","l","a","BIC","ndisc")
+# for(c in 1:length(K_search)){for(l in 1:length(lambda_search)){for(a in 1:length(alpha_search)){
+#   BICs[index,1:3] = c(K_search[c], lambda_search[l],alpha_search[a])
+#   file.name=sprintf("joint%d_%f_%f_gene_CEM_covarsF.out", K_search[c],lambda_search[l],alpha_search[a])
+#   if(file.exists(file.name)){load(file.name); BICs[index,4:5] = c(res$BIC, sum(res$discriminatory))}else{print(file.name)}
+#   index=index+1
+# }}}
+#
+# BICs[order(BICs[,4])[1:100,],]
+#
+# BICs[order(BICs[,4]),] [which.min(BICs[order(BICs[,4])[1:floor(npoints/10)],][,5]),]    # lowest ndisc from bottom 10% of BIC
+# # covarT : 3          1.00       0.30 9789277       1324
+# # covarF : 2.00       0.25       0.50 8704580.49    1169.00
