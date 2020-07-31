@@ -89,7 +89,7 @@ load("BRCA_pure_env.RData"); load("./TCGA_BRCA/BRCA_raw_normalizations.RData") #
 
 #filter raw_norm_y according to same criteria
 idx=rowMeds>=500 & mads>=quantile(mads,50/100)                                 # gene pre-filtering criteria
-colnames(raw_norm_y)=BRCA_anno$barcode; rownames(raw_norm_y)=rownames(raw_cts) # make sure column/row names are set
+colnames(raw_norm_y)=raw_anno$barcode; rownames(raw_norm_y)=rownames(raw_cts) # make sure column/row names are set
 idy = colnames(raw_norm_y) %in% colnames(cts); raw_norm_y=raw_norm_y[,idy]     # match according purity filtered samples
 colnames(norm_y)=colnames(cts)
 
