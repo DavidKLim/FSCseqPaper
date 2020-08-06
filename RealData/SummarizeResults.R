@@ -7,6 +7,9 @@ tabulateResults = function(dataset=c("BRCA_pure","BRCA_full"),med_filt=500,MAD_f
   FSC.file_F=sprintf("%s/FSC_covarsF_summary.out",res_dir)
   FSC.file_T=sprintf("%s/FSC_covarsT_summary.out",res_dir)
 
+  FSC2.file_F=sprintf("%s/FSC2_covarsF_summary.out",res_dir)   ###
+  FSC2.file_T=sprintf("%s/FSC2_covarsT_summary.out",res_dir)   ###
+
   iCl.file=sprintf("%s/iCl_summary.out",res_dir)
   HC.file=sprintf("%s/HC_summary.out",res_dir)
   KM.file=sprintf("%s/KM_summary.out",res_dir)
@@ -17,10 +20,11 @@ tabulateResults = function(dataset=c("BRCA_pure","BRCA_full"),med_filt=500,MAD_f
   rMC.file=sprintf("%s/rMC_summary.out",res_dir)
 
   load(FSC.file_F); resF=res; load(FSC.file_T); resT=res
+
+  load(FSC2.file_F); resF2=res; load(FSC2.file_T); resT2=res   ###
+
   load(iCl.file);load(HC.file);load(KM.file);load(NBMB.file);load(NMF.file);load(lMC.file);load(vMC.file);load(rMC.file)
   load(sprintf("%s_env.RData",dataset))
-
-  #idx = (rowMeds>=med_filt) & (mads >= quantile(mads,MAD_filt/100))
 
   cls=as.numeric(as.factor(cls))
   d = as.dist(1-cor(norm_y, method="spearman"))
@@ -28,11 +32,16 @@ tabulateResults = function(dataset=c("BRCA_pure","BRCA_full"),med_filt=500,MAD_f
   FSC_summary=list(cls=resF$clusters,K=length(unique(resF$clusters)))
   FSCadj_summary=list(cls=resT$clusters,K=length(unique(resT$clusters)))
 
-  summaries = c("anno_summary","FSC_summary","FSCadj_summary","iCl_summary",
-                "HC_summary","KM_summary","NBMB_summary","NMF_summary","lMC_summary","vMC_summary","rMC_summary")
+  FSC10_summary=list(cls=resF2$clusters,K=length(unique(resF2$clusters)))   ###
+  FSCadj10_summary=list(cls=resT2$clusters,K=length(unique(resT2$clusters)))   ###
+
+  # summaries = c("anno_summary","FSC_summary","FSCadj_summary","iCl_summary",
+  #               "HC_summary","KM_summary","NBMB_summary","NMF_summary","lMC_summary","vMC_summary","rMC_summary")
+  summaries = c("anno_summary","FSC_summary","FSC10_summary","FSCadj_summary","FSCadj10_summary","iCl_summary",
+                "HC_summary","KM_summary","NBMB_summary","NMF_summary","lMC_summary","vMC_summary","rMC_summary")    ###
 
   metrics=c("K","RI","NID","NVI","NMI","ARI")
-  # RI(up),NID(down),NVI(down),NMI(up),ARI(up),ASW(up),VI(down),PG(up),dunn(up),dunn2(up),entropy(down),ch(up),wb.ratio(down),sindex(up)
+  #####RI(up),NID(down),NVI(down),NMI(up),ARI(up),ASW(up),VI(down),PG(up),dunn(up),dunn2(up),entropy(down),ch(up),wb.ratio(down),sindex(up)
   library(aricode)
   fill.row=function(d,summary){
     metrics=c("K","RI","NID","NVI","NMI","ARI")
@@ -85,6 +94,7 @@ save(tab3,file="Results/Tab3.out")
 #read in results and data
 load(sprintf("%s/FSC_covarsF_summary.out",dir_name)); resF=res
 load(sprintf("%s/FSC_covarsT_summary.out",dir_name)); resT=res
+load(sprintf("%s/FSC2_covarsT_summary.out",dir_name)); resT2=res
 load("BRCA_pure_env.RData"); load("./TCGA_BRCA/BRCA_raw_normalizations.RData") # raw_norm_y plotted later to show all PAM50 genes
 
 #filter raw_norm_y according to same criteria
@@ -108,20 +118,26 @@ genelist2=genelist[idx]
 PF_incl = as.factor(pam50 %in% genelist[idx]) # 41/50 passed pre-filtering
 resF_incl = as.factor(pam50 %in% genelist2[resF$discriminatory])
 resT_incl = as.factor(pam50 %in% genelist2[resT$discriminatory])
+resT2_incl = as.factor(pam50 %in% genelist2[resT2$discriminatory])
 
 annotation_row = data.frame(PF_incl,
-                            resF_incl, resT_incl)      # passed low count filtering (full), passed MAD pre-filtering, selected disc (disc)
-colnames(annotation_row)=c("Passed PF","Disc (FSC)", "Disc (FSCadj)")
+                            resF_incl, resT_incl, resT2_incl)      # passed low count filtering (full), passed MAD pre-filtering, selected disc (disc)
+colnames(annotation_row)=c("Passed PF","Disc (FSC)", "Disc (FSCadj)", "Disc (FSC10adj)")#expression(paste("Disc (",FSCadj^"10",")")))
 rownames(annotation_row)=pam50
 mycolors_PF=c("#FFFFFF","#000000")
 mycolors_resF=c("#FFFFFF","#000000")
 mycolors_resT=c("#FFFFFF","#000000")
+mycolors_resT2=c("#FFFFFF","#000000")
 names(mycolors_PF)=levels(PF_incl)
 names(mycolors_resF)=levels(resF_incl)
 names(mycolors_resT)=levels(resT_incl)
+names(mycolors_resT2)=levels(resT2_incl)
 mycolors2 = list("Passed PF"=mycolors_PF,
                  "Disc (FSC)"=mycolors_resF,
-                 "Disc (FSCadj)"=mycolors_resT)
+                 "Disc (FSCadj)"=mycolors_resT,
+                 "Disc (FSC10adj)"=mycolors_resT2
+                 #expression(paste("Disc (",FSCadj^"10",")"))=mycolors_resT2
+                 )
 
 # annotation col
 # competing performers: KM, lMC
@@ -132,8 +148,9 @@ annotation_col = data.frame(factor(lMC_summary$cls),
                             factor(KM_summary$cls),
                             factor(resF$clusters),
                             factor(resT$clusters),
+                            factor(resT2$clusters),
                             factor(cls))
-colnames(annotation_col)=c("lMC","KM","FSC","FSCadj","Annotated")
+colnames(annotation_col)=c("lMC","KM","FSC","FSCadj","FSC10adj","Annotated")
 rownames(annotation_col)=colnames(cts)
 
 # order colors manually for highest consistency in coloring
@@ -141,15 +158,17 @@ newCols <- colorRampPalette(grDevices::rainbow(5))
 mycolors_anno=newCols(3)
 mycolors_FSC=newCols(5)[c(2,1,5,4,3)]
 mycolors_FSCadj=newCols(3)[c(3,2,1)]
+mycolors_FSC10adj=newCols(3)[c(3,2,1)]
 mycolors_lMC=newCols(4)[c(2,1,4,3)]
 mycolors_KM=newCols(2)[c(2,1)]
 names(mycolors_anno)=unique(cls)[order(unique(cls))]
 names(mycolors_FSC)=unique(resF$clusters)[order(unique(resF$clusters))]
 names(mycolors_FSCadj)=unique(resT$clusters)[order(unique(resT$clusters))]
+names(mycolors_FSC10adj)=unique(resT2$clusters)[order(unique(resT2$clusters))]
 names(mycolors_lMC)=unique(lMC_summary$cls)[order(unique(lMC_summary$cls))]
 names(mycolors_KM)=unique(KM_summary$cls)[order(unique(KM_summary$cls))]
 
-mycolors1 = list(lMC=mycolors_lMC,KM=mycolors_KM,FSC=mycolors_FSC,FSCadj=mycolors_FSCadj,Annotated=mycolors_anno)
+mycolors1 = list(lMC=mycolors_lMC,KM=mycolors_KM,FSC=mycolors_FSC,FSCadj=mycolors_FSCadj,FSC10adj=mycolors_FSC10adj,Annotated=mycolors_anno)
 
 # colors/breaks #
 showpanel <- function(Colors){image(matrix(1:length(Colors), ncol=1), col=Colors, xaxt="n", yaxt="n" )}
@@ -209,14 +228,16 @@ annotation_col = data.frame(factor(rMC_summary$cls),
                             factor(iCl_summary$cls),
                             factor(resF$clusters),
                             factor(resT$clusters),
+                            factor(resT2$clusters),
                             factor(cls))
-colnames(annotation_col)=c("rMC","vMC","lMC","NBMB","NMF","KM","HC","iCl","FSC","FSCadj","Annotated")
+colnames(annotation_col)=c("rMC","vMC","lMC","NBMB","NMF","KM","HC","iCl","FSC","FSCadj","FSC10adj","Annotated")
 rownames(annotation_col)=colnames(cts)
 
 newCols <- colorRampPalette(grDevices::rainbow(8))
 mycolors_anno=newCols(3)
 mycolors_FSC=newCols(5)[c(2,1,5,4,3)]
 mycolors_FSCadj=newCols(3)[c(2,3,1)]
+mycolors_FSC10adj=newCols(3)[c(2,3,1)]
 mycolors_lMC=newCols(4)[c(4,1,2,3)]
 mycolors_rMC=newCols(4)[c(4,1,2,3)]
 mycolors_vMC=newCols(4)[c(4,1,2,3)]
@@ -229,6 +250,7 @@ mycolors_NMF=newCols(3)[c(2,1)]
 names(mycolors_anno)=unique(cls)[order(unique(cls))]
 names(mycolors_FSC)=unique(resF$clusters)[order(unique(resF$clusters))]
 names(mycolors_FSCadj)=unique(resT$clusters)[order(unique(resT$clusters))]
+names(mycolors_FSC10adj)=unique(resT2$clusters)[order(unique(resT2$clusters))]
 names(mycolors_lMC)=unique(lMC_summary$cls)[order(unique(lMC_summary$cls))]
 names(mycolors_vMC)=unique(vMC_summary$cls)[order(unique(vMC_summary$cls))]
 names(mycolors_rMC)=unique(rMC_summary$cls)[order(unique(rMC_summary$cls))]
@@ -241,7 +263,7 @@ names(mycolors_NMF)=unique(NMF_summary$cls)[order(unique(NMF_summary$cls))]
 
 mycolors1 = list(rMC=mycolors_rMC,vMC=mycolors_vMC,lMC=mycolors_lMC,
                  NBMB=mycolors_NBMB,NMF=mycolors_NMF,KM=mycolors_KM,HC=mycolors_HC,
-                 iCl=mycolors_iCl,FSC=mycolors_FSC,FSCadj=mycolors_FSCadj,Annotated=mycolors_anno)
+                 iCl=mycolors_iCl,FSC=mycolors_FSC,FSCadj=mycolors_FSCadj,FSC10adj=mycolors_FSC10adj,Annotated=mycolors_anno)
 
 # plot pheatmap all disc genes from FSCadj #
 # png("Results/SFig1.png",height=1000,width=800,res=300,type="cairo")
@@ -380,7 +402,9 @@ save(stab8,file="Results/STab8.out")
 # Supp Figure 4: BRCA_full all cluster-disc genes heatmap
 
 load("./BRCA_full_med500_MAD50/FSC_covarsF_summary.out"); resF=res
+load("./BRCA_full_med500_MAD50/FSC2_covarsF_summary.out"); resF2=res
 load("./BRCA_full_med500_MAD50/FSC_covarsT_summary.out"); resT=res
+load("./BRCA_full_med500_MAD50/FSC2_covarsT_summary.out"); resT2=res
 load("BRCA_full_env.RData")
 idx=rowMeds>=500 & mads>=quantile(mads,0.5)
 # annotation col
@@ -391,28 +415,34 @@ annotation_col = data.frame(factor(anno$cls_sigCL_intrinsic),
                             factor(anno$cls_sigCL_unsupervised),
                             factor(KM_summary$cls),
                             factor(resF$clusters),
+                            factor(resF2$clusters),
                             factor(resT$clusters),
+                            factor(resT2$clusters),
                             factor(cls))
 colnames(annotation_col)=c("SigI","SigU",
-                           "KM","FSC","FSCadj","Anno")
+                           "KM","FSC","FSC10","FSCadj","FSC10adj","Anno")
 rownames(annotation_col)=colnames(cts)
 
 newCols <- colorRampPalette(grDevices::rainbow(14))
 mycolors_anno=newCols(5)
 mycolors_FSC=newCols(7)[c(4,2,3,1,5,6,7)]
+mycolors_FSC10=newCols(5)[c(4,5,1,3,2)]
 mycolors_FSCadj=newCols(8)[c(3,2,5,7,4,6,1,8)]
+mycolors_FSC10adj=newCols(5)[c(3,4,5,1,2)]
 mycolors_I=newCols(14)[c(5,2,3,4,1,6:14)]
 mycolors_U=newCols(13)
 mycolors_KM=newCols(14)[c(12,1)]
 names(mycolors_anno)=unique(cls)[order(unique(cls))]
 names(mycolors_FSC)=unique(resF$clusters)[order(unique(resF$clusters))]
+names(mycolors_FSC10)=unique(resF2$clusters)[order(unique(resF2$clusters))]
 names(mycolors_FSCadj)=unique(resT$clusters)[order(unique(resT$clusters))]
+names(mycolors_FSC10adj)=unique(resT2$clusters)[order(unique(resT2$clusters))]
 names(mycolors_I)=unique(anno$cls_sigCL_intrinsic)[order(unique(anno$cls_sigCL_intrinsic))]
 names(mycolors_U)=unique(anno$cls_sigCL_unsupervised)[order(unique(anno$cls_sigCL_unsupervised))]
 names(mycolors_KM)=unique(KM_summary$cls)[order(unique(KM_summary$cls))]
 
 mycolors1 = list(SigI=mycolors_I, SigU=mycolors_U,
-                 KM=mycolors_KM,FSC=mycolors_FSC,FSCadj=mycolors_FSCadj,Anno=mycolors_anno)
+                 KM=mycolors_KM,FSC=mycolors_FSC,FSC10=mycolors_FSC10,FSCadj=mycolors_FSCadj,FSC10adj=mycolors_FSC10adj,Anno=mycolors_anno)
 
 # colors/breaks #
 showpanel <- function(Colors){image(matrix(1:length(Colors), ncol=1), col=Colors, xaxt="n", yaxt="n" )}
@@ -422,7 +452,7 @@ myBreaks <- seq(-2, 2, length.out=101)
 dev.off()
 
 # png("./Results/SFig4.png",height=980,width=930,res=300,type="cairo")
-pheatmap(log(norm_y[idx,order(cls,resT$clusters,resF$clusters)][resT$discriminatory,]+0.1),scale="row",cluster_cols=F,
+pheatmap(log(norm_y[idx,order(cls,resT2$clusters,resT$clusters)][resT$discriminatory,]+0.1),scale="row",cluster_cols=F,
          annotation_col=annotation_col,annotation_colors=mycolors1, color=my_cols,show_colnames=F,show_rownames=F,
          breaks=myBreaks,main="TCGA BRCA All Samples, Disc Genes from FSCseq, Ordered by Subtype",height=14,width=12,filename="./Results/SFig4.png")
 # dev.off()
@@ -456,20 +486,20 @@ corPlots("BRCA_full","T")
 opt_model = function(dataset,covars){
   K_search=2:8; lambda_search=seq(0.25,5,0.25); alpha_search=c(0.01,seq(0.05,0.5,0.05))
   npoints = length(K_search)*length(lambda_search)*length(alpha_search)
-  BICs=matrix(NA,nrow=npoints,ncol=5)
+  BICs=matrix(NA,nrow=npoints,ncol=6)
   index=1
-  colnames(BICs) = c("K","l","a","BIC","ndisc")
+  colnames(BICs) = c("K","l","a","BIC","ndisc","nparams")
   for(c in 1:length(K_search)){for(l in 1:length(lambda_search)){for(a in 1:length(alpha_search)){
     BICs[index,1:3] = c(K_search[c], lambda_search[l],alpha_search[a])
     file.name=sprintf("%s_med500_MAD50/joint%d_%f_%f_gene_CEM_covars%s.out", dataset,K_search[c],lambda_search[l],alpha_search[a],covars)
-    if(file.exists(file.name)){load(file.name); BICs[index,4:5] = c(res$BIC, sum(res$discriminatory))}else{print(file.name)}
+    if(file.exists(file.name)){load(file.name); BICs[index,4:6] = c(res$BIC, sum(res$discriminatory), res$num_est_params)}else{print(file.name)}
     index=index+1
   }}}
 
-  BICs[order(BICs[,4])[1:100,],]
+  #BICs[order(BICs[,4])[1:100,],]
 
   return(
-    BICs[order(BICs[,4]),] [which.min(BICs[order(BICs[,4])[1:floor(npoints/10)],][,5]),]    # lowest ndisc from bottom 10% of BIC
+    BICs[order(BICs[,4]),] [which.min(BICs[order(BICs[,4])[1:floor(npoints/10)],][,6]),]    # lowest nparams from bottom 10% of BIC
   )
 }
 p1=opt_model("BRCA_pure","F")
@@ -478,7 +508,7 @@ p2=opt_model("BRCA_pure","T")
 # covarT : 3          1.00       0.30 9789277       1324
 f1=opt_model("BRCA_full","F")
 f2=opt_model("BRCA_full","T")
-# covarF: 5.0        1.5        0.1 42533187.3     2800.0
+# covarF: 5.0         1.5         0.1  42533187.3      2800.0
 # covarT: 5.00        3.25        0.05 43079204.94     2834.00
 
 check_opt_model = function(dataset,covars,K,lambda,alpha){
@@ -490,9 +520,9 @@ check_opt_model = function(dataset,covars,K,lambda,alpha){
 }
 check_opt_model("BRCA_pure","F",p1[1],p1[2],p1[3])
 check_opt_model("BRCA_pure","T",p2[1],p2[2],p2[3])
-# covarF : 2.00       0.25       0.50 8704580.49    1169.00   ----> ARI = 0.486
-# covarT : 3          1.00       0.30 9789277       1324   ----> ARI = 0.610
+# covarF : 2.00       0.25       0.50 8704580.49    1169.00   9246.00    ----> ARI = 0.486
+# covarT : 3          1.00       0.30 9789277       1324      106377.0   ----> ARI = 0.610
 check_opt_model("BRCA_full","F",f1[1],f1[2],f1[3])
 check_opt_model("BRCA_full","T",f2[1],f2[2],f2[3])
-# covarF: 5.0        1.5        0.1 42533187.3     2800.0     ----> ARI = 0.254
-# covarT: 5.00        3.25        0.05 43079204.94     2834.00   ----> ARI = 0.294
+# covarF: 5.0        1.5        0.1 42533187.3     2800.0    12867.0  ----> ARI = 0.254
+# covarT: 5.0        1.5        0.1 43072187.8     2900.0    59580.0  ----> ARI = 0.288
