@@ -55,6 +55,8 @@ submit_jobs=function(method=c("FSC","iCl","MC","Others","NMF"),sigma_g=0.1,sigma
 # mv batch1 B2_LFCb1
 # mv batch2 B2_LFCb2
 # mv batch3 B2_LFCb3
+#### testing:
+#submit_jobs(sigma_g=0.1,sigma_b=0,B=1,LFCb=0,K=2,n=c(50,100),sim_index=c(1:25), LFCg=2, pDEg=0.05, beta=12, phi=0.15)
 
 # submit all methods
 submit_jobs(sigma_g=0.1,sigma_b=0,B=1,LFCb=0,K=2,n=c(50,100),sim_index=c(1:25))

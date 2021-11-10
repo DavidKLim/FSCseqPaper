@@ -1,5 +1,5 @@
 # source functions that perform each comparative method
-source("runSimAnalyses_functions.R")
+source("./Simulations/runSimAnalyses_functions.R")
 
 ## Wrapper functions for each comparative method ##
 

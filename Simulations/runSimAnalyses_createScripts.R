@@ -28,7 +28,7 @@ createScripts_FSC=function(sigma_g=0.1,sigma_b=0, B=1, LFCb=0,
     # submit job only if the FSC .out files do not exist
     if(!file.exists(res1) & !file.exists(res2)){
       cmd = rep(0, 2)
-      cmd[1] = "unlink('.RData') \n source('runSimAnalyses.R') \n"
+      cmd[1] = "unlink('.RData') \n source('./Simulations/runSimAnalyses.R') \n"
       cmd[2] = sprintf("res = runSimAnalyses_FSC(K=%d,n=%d,LFCg=%f,pDEg=%f,beta=%f,phi=%f,
                             sigma_g=%f,sigma_b=%f,B=%d,LFCb=%d,
                             K_search=%s,lambda_search=%s,alpha_search=%s,
@@ -65,7 +65,7 @@ createScripts_MC=function(sigma_g=0.1,sigma_b=0, B=1, LFCb=0,
     if(!file.exists(res.file)){
 
       cmd = rep(0, 2)
-      cmd[1] = "unlink('.RData') \n source('runSimAnalyses.R') \n"
+      cmd[1] = "unlink('.RData') \n source('./Simulations/runSimAnalyses.R') \n"
       cmd[2] = sprintf("runSimAnalyses_MC(K=%d,n=%d,LFCg=%f,pDEg=%f,beta=%f,phi=%f,
                           sigma_g=%f,sigma_b=%f,B=%d,LFCb=%d,K_search=%s,sim_index=%d)\n",
                        K[a],n[b],LFCg[c],pDEg[d],beta[e],phi[f],
@@ -97,7 +97,7 @@ createScripts_iCl=function(ncores=5,sigma_g=0.1,sigma_b=0, B=1, LFCb=0,
     if(!file.exists(res.file)){
 
       cmd = rep(0, 2)
-      cmd[1] = "unlink('.RData') \n source('runSimAnalyses.R') \n"
+      cmd[1] = "unlink('.RData') \n source('./Simulations/runSimAnalyses.R') \n"
       cmd[2] = sprintf("runSimAnalyses_iCl(ncores=%d,K=%d,n=%d,LFCg=%f,pDEg=%f,beta=%f,phi=%f,
                           sigma_g=%f,sigma_b=%f,B=%d,LFCb=%d,K_search=%s,sim_index=%d)\n",
                        ncores,K[a],n[b],LFCg[c],pDEg[d],beta[e],phi[f],
@@ -132,7 +132,7 @@ createScripts_Others=function(sigma_g=0.1,sigma_b=0, B=1, LFCb=0,
     if(!file.exists(res.file1) | !file.exists(res.file2) | !file.exists(res.file3)){
 
       cmd = rep(0, 2)
-      cmd[1] = "unlink('.RData') \n source('runSimAnalyses.R') \n"
+      cmd[1] = "unlink('.RData') \n source('./Simulations/runSimAnalyses.R') \n"
       cmd[2] = sprintf("runSimAnalyses_others(K=%d,n=%d,LFCg=%f,pDEg=%f,beta=%f,phi=%f,
                           sigma_g=%f,sigma_b=%f,B=%d,LFCb=%d,K_search=%s,sim_index=%d)\n",
                        K[a],n[b],LFCg[c],pDEg[d],beta[e],phi[f],
@@ -164,7 +164,7 @@ createScripts_NMF=function(sigma_g=0.1,sigma_b=0, B=1, LFCb=0,
     if(!file.exists(res.file)){
 
       cmd = rep(0, 2)
-      cmd[1] = "unlink('.RData') \n source('runSimAnalyses.R') \n"
+      cmd[1] = "unlink('.RData') \n source('./Simulations/runSimAnalyses.R') \n"
       cmd[2] = sprintf("runSimAnalyses_NMF(K=%d,n=%d,LFCg=%f,pDEg=%f,beta=%f,phi=%f,
                           sigma_g=%f,sigma_b=%f,B=%d,LFCb=%d,K_search=%s,sim_index=%d)\n",
                        K[a],n[b],LFCg[c],pDEg[d],beta[e],phi[f],
