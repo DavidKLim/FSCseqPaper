@@ -244,8 +244,10 @@ run_FSCseq_predict=function(sim.dat,FSC_summary){
 
   FSC_summary$processed.dat=list()
   FSC_summary$processed.dat$idx=FSC_summary$idx
-  FSC_summary$results=list()
-  FSC_summary$results$fit=FSC_summary$fit
+  FSC_summary$results=list(fit = FSC_summary$fit,
+                           K=FSC_summary$K,
+                           cls=FSC_summary$cls,
+                           discriminatory=FSC_summary$discriminatory)
 
   # FSCseq_predict_results = FSCseq::FSCseq_predict_workflow(fit=fit,cts=sim.dat$cts,cts_pred=cts_pred,idx=idx)
   FSCseq_predict_results = FSCseq::FSCseq_predict_workflow(res=FSC_summary, X_covar_train = NULL, cts_train=sim.dat$cts, SF_train=NULL, batch_train=NULL,
